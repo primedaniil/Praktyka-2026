@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор электродвигателей 500 Вт (PRO)</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --primary-color: #2563eb;
+            --accent-color: #0d9488;
+            --border-color: #e5e7eb;
+            --success: #22c55e;
+            --warning: #eab308;
+            --danger: #ef4444;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #1e3a8a;
+            margin-bottom: 6px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 1200px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: bold;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+            color: #1e293b;
+        }
+        .dc-title { border-bottom-color: var(--primary-color); }
+        .ac-title { border-bottom-color: var(--accent-color); }
+        
+        .input-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+            color: #4b5563;
+        }
+        input, select {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+            background: #fafbfc;
+        }
+        input:focus, select:focus {
+            outline: 2px solid #93c5fd;
+            background: #ffffff;
+        }
+        .readonly-input {
+            background-color: #f3f4f6;
+            cursor: not-allowed;
+        }
+        
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+        .btn-dc { background-color: var(--primary-color); }
+        .btn-dc:hover { background-color: #1d4ed8; }
+        .btn-ac { background-color: var(--accent-color); }
+        .btn-ac:hover { background-color: #0f766e; }
+        
+        .results {
+            margin-top: 16px;
+            padding: 14px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: none;
+        }
+        .results.visible {
+            display: block;
+        }
+        .results h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #334155;
+            font-size: 0.95rem;
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            font-size: 0.82rem;
+        }
+        .result-row:last-child {
+            border-bottom: none;
+        }
+        .result-val {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .sub-section {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 2px solid var(--border-color);
+        }
+        .sub-section h5 {
+            margin: 0 0 6px 0;
+            color: #475569;
+            font-size: 0.85rem;
+        }
+        .warning {
+            color: #b45309;
+            background-color: #fffbeb;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            margin-top: 4px;
+            border-left: 3px solid #f59e0b;
+        }
+        .success {
+            color: #166534;
+            background-color: #dcfce7;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            margin-top: 4px;
+            border-left: 3px solid #22c55e;
+        }
+        .danger {
+            color: #991b1b;
+            background-color: #fee2e2;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            margin-top: 4px;
+            border-left: 3px solid #ef4444;
+        }
+        
+        .insulation-selector {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 4px;
+        }
+        .insulation-selector button {
+            padding: 3px 4px;
+            font-size: 0.65rem;
+            margin: 0;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: #e2e8f0;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .insulation-selector button:hover {
+            background: #cbd5e1;
+        }
+        .insulation-selector button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .insulation-selector button.ac-active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+        
+        .field-visualization {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1.4/1;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            margin: 6px 0;
+        }
+        .field-visualization canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .field-legend {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.65rem;
+            color: #64748b;
+            padding: 3px 8px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            flex-wrap: wrap;
+        }
+        .field-legend .grad {
+            flex: 1;
+            min-width: 60px;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #2563eb, #22c55e, #eab308, #ef4444);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 1px 8px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .status-safe { background: #dcfce7; color: #166534; }
+        .status-warning { background: #fef9c3; color: #854d0e; }
+        .status-danger { background: #fee2e2; color: #991b1b; }
+        
+        .hint {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            text-align: right;
+            margin-top: 4px;
+        }
+        .hint.visible {
+            display: none;
+        }
+        
+        @media (max-width: 600px) {
+            .insulation-selector { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🏭 Инженерный калькулятор электродвигателей (PRO)</h1>
+    <p class="subtitle">500 Вт · Расширенный расчёт с тепловыми, пусковыми и полевыми характеристиками</p>
+    
+    <div class="grid">
+        <!-- ДПТ -->
+        <div class="card" id="dcCard">
+            <div class="card-title dc-title">🔌 Двигатель постоянного тока (ДПТ)</div>
+            
+            <div class="input-group">
+                <label>Полезная мощность (P₂), Вт</label>
+                <input type="number" value="500" class="readonly-input" readonly>
+            </div>
+            <div class="input-group">
+                <label>Номинальное напряжение (U), В</label>
+                <input type="number" id="dc_voltage" value="24" min="12" max="400">
+            </div>
+            <div class="input-group">
+                <label>Частота вращения (n), об/мин</label>
+                <input type="number" id="dc_speed" value="3000" min="500" max="10000">
+            </div>
+            <div class="input-group">
+                <label>КПД (η), %</label>
+                <input type="number" id="dc_eff" value="82" min="50" max="98">
+            </div>
+            
+            <div class="input-group">
+                <label>Класс изоляции (T_max)</label>
+                <div class="insulation-selector" id="dcInsulation">
+                    <button data-class="A" data-temp="105">A</button>
+                    <button data-class="E" data-temp="120">E</button>
+                    <button data-class="B" data-temp="130">B</button>
+                    <button data-class="F" data-temp="155" class="active">F</button>
+                    <button data-class="H" data-temp="180">H</button>
+                    <button data-class="C" data-temp="200">C</button>
+                </div>
+                <input type="hidden" id="dc_insulation_class" value="F">
+                <input type="hidden" id="dc_insulation_temp" value="155">
+            </div>
+            
+            <div class="input-group">
+                <label>Тип охлаждения</label>
+                <select id="dc_cooling">
+                    <option value="natural">Естественное (IC410)</option>
+                    <option value="forced" selected>Принудительное (IC411)</option>
+                    <option value="liquid">Жидкостное (IC71W)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Плотность тока (J), А/мм²</label>
+                <input type="number" id="dc_j" value="5" step="0.1" min="2" max="12">
+            </div>
+            <div class="input-group">
+                <label>Число пазов якоря (Z)</label>
+                <input type="number" id="dc_z" value="24" min="8" max="60">
+            </div>
+            
+            <div class="input-group">
+                <label>Материал магнитопровода</label>
+                <select id="dc_steel">
+                    <option value="M330" data-loss="2.1" data-bsat="1.5">M330 (2.1 Вт/кг)</option>
+                    <option value="M400" data-loss="2.8" data-bsat="1.45" selected>M400 (2.8 Вт/кг)</option>
+                    <option value="M600" data-loss="4.5" data-bsat="1.4">M600 (4.5 Вт/кг)</option>
+                    <option value="permalloy" data-loss="0.5" data-bsat="0.8">Пермаллой (0.5 Вт/кг)</option>
+                </select>
+            </div>
+            
+            <button class="btn-dc" onclick="calculateDCPro()">📊 Обновить рассчёт ДПТ</button>
+            
+            <div class="results" id="dc_results">
+                <h4>⚡ Электромагнитный расчёт</h4>
+                <div id="dcBasicResults">
+                    <div class="result-row"><span>Потребляемая мощность (P₁):</span><span class="result-val" id="res_dc_p1">-</span></div>
+                    <div class="result-row"><span>Номинальный ток (I_ном):</span><span class="result-val" id="res_dc_i">-</span></div>
+                    <div class="result-row"><span>Крутящий момент (M_ном):</span><span class="result-val" id="res_dc_torque">-</span></div>
+                    <div class="result-row"><span>Диаметр провода (d):</span><span class="result-val" id="res_dc_wire_d">-</span></div>
+                    <div class="result-row"><span>ЭДС якоря (E):</span><span class="result-val" id="res_dc_eds">-</span></div>
+                </div>
+                
+                <div class="sub-section">
+                    <h5>🔧 Геометрия якоря и обмотки</h5>
+                    <div class="result-row"><span>Диаметр якоря (D_я):</span><span class="result-val" id="res_dc_d_arm">-</span></div>
+                    <div class="result-row"><span>Длина якоря (L_я):</span><span class="result-val" id="res_dc_l_arm">-</span></div>
+                    <div class="result-row"><span>Число проводников (N):</span><span class="result-val" id="res_dc_N">-</span></div>
+                    <div class="result-row"><span>Витков в секции (w_сек):</span><span class="result-val" id="res_dc_w_sec">-</span></div>
+                </div>
+                
+                <div class="sub-section">
+                    <h5>📐 Геометрия паза</h5>
+                    <div class="result-row"><span>Ширина паза (b_п):</span><span class="result-val" id="res_dc_bp">-</span></div>
+                    <div class="result-row"><span>Высота паза (h_п):</span><span class="result-val" id="res_dc_hp">-</span></div>
+                    <div class="result-row"><span>Площадь паза (S_п):</span><span class="result-val" id="res_dc_sp">-</span></div>
+                    <div class="result-row"><span>Площадь меди (S_м):</span><span class="result-val" id="res_dc_scu">-</span></div>
+                    <div class="result-row"><span>Коэф. заполнения (k_зап):</span><span class="result-val" id="res_dc_kfill">-</span></div>
+                </div>
+                
+                <div class="sub-section">
+                    <h5>🚀 Пусковые характеристики</h5>
+                    <div class="result-row"><span>Пусковой ток (I_пуск):</span><span class="result-val" id="res_dc_i_start">-</span></div>
+                    <div class="result-row"><span>Пусковой момент (M_пуск):</span><span class="result-val" id="res_dc_m_start">-</span></div>
+                    <div class="result-row"><span>Кратность пускового тока:</span><span class="result-val" id="res_dc_k_i_start">-</span></div>
+                    <div class="result-row"><span>Кратность пускового момента:</span><span class="result-val" id="res_dc_k_m_start">-</span></div>
+                    <div class="result-row"><span>Время пуска (t_пуск):</span><span class="result-val" id="res_dc_t_start">-</span></div>
+                </div>
+                
+                <div class="sub-section">
+                    <h5>🌡️ Тепловой режим</h5>
+                    <div class="result-row"><span>Потери в меди (P_м):</span><span class="result-val" id="res_dc_pcu">-</span></div>
+                    <div class="result-row"><span>Потери в стали (P_ст):</span><span class="result-val" id="res_dc_psteel">-</span></div>
+                    <div class="result-row"><span>Суммарные потери (P_сум):</span><span class="result-val" id="res_dc_ploss">-</span></div>
+                    <div class="result-row"><span>Поверхность охлаждения (S_охл):</span><span class="result-val" id="res_dc_scool">-</span></div>
+                    <div class="result-row"><span>Тепловой поток (q):</span><span class="result-val" id="res_dc_q">-</span></div>
+                    <div class="result-row"><span>Перегрев (Δt):</span><span class="result-val" id="res_dc_dt">-</span></div>
+                    <div class="result-row"><span>Класс изоляции:</span><span class="result-val" id="res_dc_ins_class">-</span></div>
+                    <div class="result-row"><span>Допустимая T_max:</span><span class="result-val" id="res_dc_tmax">-</span></div>
+                    <div id="dc_thermal_status"></div>
+                </div>
+                
+                <div class="sub-section">
+                    <h5>🌀 Расчёт вентилятора (принудительное охлаждение)</h5>
+                    <div class="result-row"><span>Необходимый расход воздуха (Q):</span><span class="result-val" id="res_dc_airflow">-</span></div>
+                    <div class="result-row"><span>Диаметр вентилятора (D_вен):</span><span class="result-val" id="res_dc_fan_d">-</span></div>
+                    <div class="result-row"><span>Скорость воздуха (v_воз):</span><span class="result-val" id="res_dc_air_v">-</span></div>
+                    <div class="result-row"><span>Мощность вентилятора (P_вен):</span><span class="result-val" id="res_dc_fan_p">-</span></div>
+                </div>
+                
+                <div class="sub-section">
+                    <h5>🧲 Визуализация поля</h5>
+                    <div class="field-visualization">
+                        <canvas id="fieldDC" width="400" height="300"></canvas>
+                    </div>
+                    <div class="field-legend">
+                        <span>Индукция B:</span>
+                        <div class="grad"></div>
+                        <span>0.0 Тл</span>
+                        <span style="font-weight:600;">1.5 Тл</span>
+                    </div>
+                    <div style="font-size:0.6rem;color:#94a3b8;text-align:center;">Качественное распределение магнитного поля</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- АД -->
+        <div class="card" id="acCard">
+            <div class="card-title ac-title">🌀 Асинхронный двигатель (АД)</div>
+            
+            <div class="input-group">
+                <label>Полезная мощность (P₂), Вт</label>
+                <input type="number" value="500" class="readonly-input" readonly>
+            </div>
+            <div class="input-group">
+                <label>Линейное напряжение (U), В</label>
+                <select id="ac_voltage">
+                    <option value="220" selected>220 В (1фаз/3фаз треугольник)</option>
+                    <option value="380">380 В (3фаз звезда)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Число полюсов (2p)</label>
+                <select id="ac_poles">
+                    <option value="2">2 (3000 об/мин)</option>
+                    <option value="4" selected>4 (1500 об/мин)</option>
+                    <option value="6">6 (1000 об/мин)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Коэффициент мощности (cos φ)</label>
+                <input type="number" id="ac_cos" value="0.78" step="0.01" min="0.5" max="0.99">
+            </div>
+            <div class="input-group">
+                <label>КПД (η), %</label>
+                <input type="number" id="ac_eff" value="75" min="50" max="98">
+            </div>
+            <div class="input-group">
+                <label>Номинальное скольжение (s), %</label>
+                <input type="number" id="ac_slip" value="6" step="0.1" min="1" max="15">
+            </div>
+            <div class="input-group">
+                <label>Число пазов статора (Z₁)</label>
+                <input type="number" id="ac_z1" value="24" min="12" max="72">
+            </div>
+            
+            <div class="input-group">
+                <label>Класс изоляции (T_max)</label>
+                <div class="insulation-selector" id="acInsulation">
+                    <button data-class="A" data-temp="105">A</button>
+                    <button data-class="E" data-temp="120">E</button>
+                    <button data-class="B" data-temp="130">B</button>
+                    <button data-class="F" data-temp="155" class="active ac-active">F</button>
+                    <button data-class="H" data-temp="180">H</button>
+                    <button data-class="C" data-temp="200">C</button>
+                </div>
+                <input type="hidden" id="ac_insulation_class" value="F">
+                <input type="hidden" id="ac_insulation_temp" value="155">
+            </div>
+            
+            <div class="input-group">
+                <label>Тип охлаждения</label>
+                <select id="ac_cooling">
+                    <option value="natural">Естественное (IC410)</option>
+                    <option value="forced" selected>Принудительное (IC411)</option>
+                    <option value="liquid">Жидкостное (IC71W)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Материал магнитопровода</label>
+                <select id="ac_steel">
+                    <option value="M330" data-loss="2.1" data-bsat="1.5">M330 (2.1 Вт/кг)</option>
+                    <option value="M400" data-loss="2.8" data-bsat="1.45" selected>M400 (2.8 Вт/кг)</option>
+                    <option value="M600" data-loss="4.5" data-bsat="1.4">M600 (4.5 Вт/кг)</option>
+                    <option value="permalloy" data-loss="0.5" data-bsat="0.8">Пермаллой (0.5 Вт/кг)</option>
+                </select>
+            </div>
+            
+            <button class="btn-ac" onclick="calculateACPro()">📊  Обновить рассчёт АД</button>
+            
+            <div class="results" id="ac_results">
+                <h4>⚡ Электромагнитный расчёт</h4>
+                <div id="acBasicResults">
+                    <div class="result-row"><span>Синхронная частота:</span><span class="result-val" id="res_ac_sync_n">-</span></div>
+                    <div class="result-row"><span>Номинальная частота (n):</span><span class="result-val" id="res_ac_n">-</span></div>
+                    <div class="result-row"><span>Активная мощность (P₁):</span><span class="result-val" id="res_ac_p1">-</span></div>
+                    <div class="result-row"><span>Линейный ток (I_лин):</span><span class="result-val" id="res_ac_i">-</span></div>
+                    <div class="result-row"><span>Крутящий момент (M_ном):</span><span class="result-val" id="res_ac_torque">-</span></div>
+                </div>
+                
+                <div class="sub-section">
+                    <h5>🔧 Геометрия статора</h5>
+                    <div class="result-row"><span>Диаметр расточки (D₁):</span><span class="result-val" id="res_ac_d_stator">-</span></div>
+                    <div class="result-row"><span>Длина пакета (L₁):</span><span class="result-val" id="res_ac_l_stator">-</span></div>
+                    <div class="result-row"><span>Проводников в пазу (u_п):</span><span class="result-val" id="res_ac_u_p">-</span></div>
+                    <div class="result-row"><span>Шаг обмотки (y):</span><span class="result-val" id="res_ac_y">-</span></div>
+                </div>
+                
+                <div class="sub-section">
+                    <h5>📐 Геометрия паза статора</h5>
+                    <div class="result-row"><span>Ширина паза (b_п):</span><span class="result-val" id="res_ac_bp">-</span></div>
+                    <div class="result-row"><span>Высота паза (h_п):</span><span class="result-val" id="res_ac_hp">-</span></div>
+                    <div class="result-row"><span>Площадь паза (S_п):</span><span class="result-val" id="res_ac_sp">-</span></div>
+                    <div class="result-row"><span>Площадь меди (S_м):</span><span class="result-val" id="res_ac_scu">-</span></div>
+                    <div class="result-row"><span>Коэф. заполнения:</span><span class="result-val" id="res_ac_kfill">-</span></div>
+                </div>
+                
+                <div class="sub-section">
+                    <h5>🚀 Пусковые характеристики</h5>
+                    <div class="result-row"><span>Пусковой ток (I_пуск):</span><span class="result-val" id="res_ac_i_start">-</span></div>
+                    <div class="result-row"><span>Пусковой момент (M_пуск):</span><span class="result-val" id="res_ac_m_start">-</span></div>
+                    <div class="result-row"><span>Кратность пускового тока:</span><span class="result-val" id="res_ac_k_i_start">-</span></div>
+                    <div class="result-row"><span>Кратность пускового момента:</span><span class="result-val" id="res_ac_k_m_start">-</span></div>
+                    <div class="result-row"><span>Время пуска (t_пуск):</span><span class="result-val" id="res_ac_t_start">-</span></div>
+                </div>
+                
+                <div class="sub-section">
+                    <h5>🌡️ Тепловой режим</h5>
+                    <div class="result-row"><span>Потери в меди (P_м):</span><span class="result-val" id="res_ac_pcu">-</span></div>
+                    <div class="result-row"><span>Потери в стали (P_ст):</span><span class="result-val" id="res_ac_psteel">-</span></div>
+                    <div class="result-row"><span>Суммарные потери (P_сум):</span><span class="result-val" id="res_ac_ploss">-</span></div>
+                    <div class="result-row"><span>Поверхность охлаждения (S_охл):</span><span class="result-val" id="res_ac_scool">-</span></div>
+                    <div class="result-row"><span>Тепловой поток (q):</span><span class="result-val" id="res_ac_q">-</span></div>
+                    <div class="result-row"><span>Перегрев (Δt):</span><span class="result-val" id="res_ac_dt">-</span></div>
+                    <div class="result-row"><span>Класс изоляции:</span><span class="result-val" id="res_ac_ins_class">-</span></div>
+                    <div class="result-row"><span>Допустимая T_max:</span><span class="result-val" id="res_ac_tmax">-</span></div>
+                    <div id="ac_thermal_status"></div>
+                </div>
+                
+                <div class="sub-section">
+                    <h5>🌀 Расчёт вентилятора (принудительное охлаждение)</h5>
+                    <div class="result-row"><span>Необходимый расход воздуха (Q):</span><span class="result-val" id="res_ac_airflow">-</span></div>
+                    <div class="result-row"><span>Диаметр вентилятора (D_вен):</span><span class="result-val" id="res_ac_fan_d">-</span></div>
+                    <div class="result-row"><span>Скорость воздуха (v_воз):</span><span class="result-val" id="res_ac_air_v">-</span></div>
+                    <div class="result-row"><span>Мощность вентилятора (P_вен):</span><span class="result-val" id="res_ac_fan_p">-</span></div>
+                </div>
+                
+                <div class="sub-section">
+                    <h5>🧲 Визуализация поля</h5>
+                    <div class="field-visualization">
+                        <canvas id="fieldAC" width="400" height="300"></canvas>
+                    </div>
+                    <div class="field-legend">
+                        <span>Индукция B:</span>
+                        <div class="grad"></div>
+                        <span>0.0 Тл</span>
+                        <span style="font-weight:600;">1.5 Тл</span>
+                    </div>
+                    <div style="font-size:0.6rem;color:#94a3b8;text-align:center;">Качественное распределение магнитного поля</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// 1. УТИЛИТЫ
+// ============================================================
+const rho_cu = 0.0175;
+
+function getInsulationData(prefix) {
+    const cls = document.getElementById(prefix + '_insulation_class').value;
+    const temp = parseFloat(document.getElementById(prefix + '_insulation_temp').value);
+    return { class: cls, temp: temp };
+}
+
+function getCoolingData(prefix) {
+    const type = document.getElementById(prefix + '_cooling').value;
+    const alphas = { natural: 25, forced: 45, liquid: 120 };
+    const v_air = { natural: 0.5, forced: 8, liquid: 0 };
+    return { 
+        type: type, 
+        alpha: alphas[type] || 25,
+        v_air: v_air[type] || 0.5,
+        label: { natural: 'Естественное', forced: 'Принудительное', liquid: 'Жидкостное' }[type]
+    };
+}
+
+function getSteelData(prefix) {
+    const sel = document.getElementById(prefix + '_steel');
+    const loss = parseFloat(sel.options[sel.selectedIndex].dataset.loss);
+    const bsat = parseFloat(sel.options[sel.selectedIndex].dataset.bsat);
+    return { loss: loss, bsat: bsat };
+}
+
+function getStatusInfo(temp, maxAllowed) {
+    const margin = maxAllowed - temp;
+    if (margin > 30) return { status: 'safe', label: '✅ Норма', class: 'status-safe', margin: margin };
+    if (margin > 10) return { status: 'warning', label: '⚠️ Внимание', class: 'status-warning', margin: margin };
+    return { status: 'danger', label: '🔴 Критично!', class: 'status-danger', margin: margin };
+}
+
+// ============================================================
+// 2. ВИЗУАЛИЗАЦИЯ ПОЛЯ
+// ============================================================
+function drawField(canvasId, type, fluxLevel) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+    
+    ctx.clearRect(0, 0, W, H);
+    
+    const grad = ctx.createRadialGradient(W/2, H/2, 20, W/2, H/2, W*0.6);
+    grad.addColorStop(0, '#1e293b');
+    grad.addColorStop(1, '#0f172a');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+    
+    const cx = W/2, cy = H/2;
+    const R = Math.min(W, H) * 0.38;
+    
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    const rInner = R * 0.6;
+    ctx.beginPath();
+    ctx.arc(cx, cy, rInner, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    
+    const numLines = 8;
+    for (let i = 0; i < numLines; i++) {
+        const angle = (i / numLines) * Math.PI * 2;
+        const x1 = cx + (rInner + 5) * Math.cos(angle);
+        const y1 = cy + (rInner + 5) * Math.sin(angle);
+        const x2 = cx + (R - 5) * Math.cos(angle);
+        const y2 = cy + (R - 5) * Math.sin(angle);
+        
+        const intensity = 0.3 + 0.7 * (1 - Math.abs(Math.sin(angle + Math.PI/4)));
+        const alpha = 0.2 + 0.5 * intensity * (fluxLevel || 0.8);
+        
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        const midAngle = angle + 0.15 * Math.sin(angle * 2);
+        const midR = (rInner + R) / 2 + 10 * Math.sin(angle * 3);
+        const mx = cx + midR * Math.cos(midAngle);
+        const my = cy + midR * Math.sin(midAngle);
+        ctx.quadraticCurveTo(mx, my, x2, y2);
+        ctx.strokeStyle = `rgba(100, 200, 255, ${alpha})`;
+        ctx.lineWidth = 1 + 2 * intensity * (fluxLevel || 0.8);
+        ctx.stroke();
+    }
+    
+    const numSlots = type === 'dc' ? 12 : 18;
+    for (let i = 0; i < numSlots; i++) {
+        const angle = (i / numSlots) * Math.PI * 2;
+        const r1 = rInner - 2;
+        const r2 = rInner + (type === 'dc' ? 6 : 10);
+        const x1 = cx + r1 * Math.cos(angle);
+        const y1 = cy + r1 * Math.sin(angle);
+        const x2 = cx + r2 * Math.cos(angle);
+        const y2 = cy + r2 * Math.sin(angle);
+        
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = `rgba(255, 255, 200, ${0.15 * (fluxLevel || 0.8)})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+    
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = '9px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText(type === 'dc' ? 'Якорь' : 'Ротор', cx, cy - rInner + 12);
+    ctx.textBaseline = 'top';
+    ctx.fillText(type === 'dc' ? 'Станина' : 'Статор', cx, cy - R + 14);
+}
+
+// ============================================================
+// 3. ДПТ - РАСЧЁТ
+// ============================================================
+function calculateDCPro() {
+    const P2 = 500;
+    const U = parseFloat(document.getElementById('dc_voltage').value);
+    const n = parseFloat(document.getElementById('dc_speed').value);
+    const eff = parseFloat(document.getElementById('dc_eff').value) / 100;
+    const J = parseFloat(document.getElementById('dc_j').value);
+    const Z = parseInt(document.getElementById('dc_z').value);
+    
+    const ins = getInsulationData('dc');
+    const cooling = getCoolingData('dc');
+    const steel = getSteelData('dc');
+    
+    // --- Электромагнитные ---
+    const P1 = P2 / eff;
+    const I = P1 / U;
+    const omega = 2 * Math.PI * n / 60;
+    const torque = P2 / omega;
+    const wire_s = (I / 2) / J;
+    const wire_d = 2 * Math.sqrt(wire_s / Math.PI);
+    const eds = U * 0.9;
+    
+    // --- Геометрия ---
+    let D_arm = Math.pow(P2 / (n / 1000), 0.3) * 2.5 * 10;
+    D_arm = Math.round(D_arm / 5) * 5;
+    let L_arm = D_arm * 0.8;
+    L_arm = Math.round(L_arm / 5) * 5;
+    
+    const Bd = 0.55;
+    const p = 1;
+    const a = 1;
+    const D_m = D_arm / 1000;
+    const L_m = L_arm / 1000;
+    const Phi = Bd * (Math.PI * D_m * L_m) / (2 * p);
+    let N = (eds * 60 * a) / (p * Phi * n);
+    N = Math.round(N / 10) * 10;
+    const w_sec = Math.round(N / 2 / Z);
+    
+    // --- Геометрия паза ---
+    const b_p = Math.round((Math.PI * D_arm / Z) * 0.42 * 10) / 10;
+    const h_p = Math.round(D_arm * 0.22 * 10) / 10;
+    const S_p = b_p * h_p;
+    const S_cu = (wire_s * (N / Z)) / 2;
+    const k_fill = S_cu / S_p;
+    
+    // --- Тепловой режим ---
+    const l_wire = N * (L_arm + D_arm) / 1000;
+    const R_arm = rho_cu * l_wire / (wire_s * 2);
+    const P_cu = I * I * R_arm;
+    
+    const steelMass = Math.PI * (D_arm/1000) * (L_arm/1000) * 7850 * 0.5;
+    const P_steel = steel.loss * steelMass * (n/1500) * 1.5;
+    
+    const P_loss = P_cu + P_steel;
+    
+    const S_cool = Math.PI * D_arm * L_arm / 1e6 + 2 * Math.PI * (D_arm/2) * (D_arm/2) / 1e6;
+    const q_flux = P_loss / S_cool;
+    const alpha = cooling.alpha;
+    const dt = q_flux / alpha;
+    const t_actual = 40 + dt;
+    
+    // --- Пусковые ---
+    const R_start = R_arm * 0.8;
+    const I_start = U / R_start;
+    const M_start = torque * (I_start / I) * 0.8;
+    const k_i_start = I_start / I;
+    const k_m_start = M_start / torque;
+    const t_start = (2 * Math.PI * n / 60) * (0.1) / (M_start - torque);
+    
+    // --- Вентилятор ---
+    const Q_air = P_loss / (1.2 * 1000 * 5);
+    const Q_air_m3h = Q_air * 3600;
+    const D_fan = Math.sqrt(Q_air / (Math.PI * 0.5 * cooling.v_air)) * 1000;
+    const v_air = cooling.v_air;
+    const P_fan = 0.5 * 1.2 * Q_air * (v_air * v_air) / 0.6;
+    
+    // --- Вывод ---
+    document.getElementById('res_dc_p1').innerText = P1.toFixed(1) + ' Вт';
+    document.getElementById('res_dc_i').innerText = I.toFixed(2) + ' А';
+    document.getElementById('res_dc_torque').innerText = torque.toFixed(2) + ' Н·м';
+    document.getElementById('res_dc_wire_d').innerText = wire_d.toFixed(2) + ' мм';
+    document.getElementById('res_dc_eds').innerText = eds.toFixed(1) + ' В';
+    
+    document.getElementById('res_dc_d_arm').innerText = D_arm + ' мм';
+    document.getElementById('res_dc_l_arm').innerText = L_arm + ' мм';
+    document.getElementById('res_dc_N').innerText = N;
+    document.getElementById('res_dc_w_sec').innerText = w_sec;
+    document.getElementById('res_dc_bp').innerText = b_p.toFixed(1) + ' мм';
+    document.getElementById('res_dc_hp').innerText = h_p.toFixed(1) + ' мм';
+    document.getElementById('res_dc_sp').innerText = S_p.toFixed(2) + ' мм²';
+    document.getElementById('res_dc_scu').innerText = S_cu.toFixed(2) + ' мм²';
+    document.getElementById('res_dc_kfill').innerText = (k_fill * 100).toFixed(1) + '%';
+    
+    document.getElementById('res_dc_i_start').innerText = I_start.toFixed(2) + ' А';
+    document.getElementById('res_dc_m_start').innerText = M_start.toFixed(2) + ' Н·м';
+    document.getElementById('res_dc_k_i_start').innerText = k_i_start.toFixed(1) + '×';
+    document.getElementById('res_dc_k_m_start').innerText = k_m_start.toFixed(1) + '×';
+    document.getElementById('res_dc_t_start').innerText = t_start.toFixed(2) + ' с';
+    
+    document.getElementById('res_dc_pcu').innerText = P_cu.toFixed(2) + ' Вт';
+    document.getElementById('res_dc_psteel').innerText = P_steel.toFixed(2) + ' Вт';
+    document.getElementById('res_dc_ploss').innerText = P_loss.toFixed(2) + ' Вт';
+    document.getElementById('res_dc_scool').innerText = (S_cool * 1e4).toFixed(1) + ' см²';
+    document.getElementById('res_dc_q').innerText = q_flux.toFixed(0) + ' Вт/м²';
+    document.getElementById('res_dc_dt').innerText = dt.toFixed(1) + ' °C';
+    document.getElementById('res_dc_ins_class').innerText = ins.class + ' (' + ins.temp + '°C)';
+    document.getElementById('res_dc_tmax').innerText = ins.temp + ' °C';
+    
+    const status = getStatusInfo(t_actual, ins.temp);
+    const statusEl = document.getElementById('dc_thermal_status');
+    statusEl.innerHTML = `<div class="${status.status}">Статус: ${status.label} (запас ${Math.round(status.margin)}°C)</div>`;
+    
+    document.getElementById('res_dc_airflow').innerText = Q_air_m3h.toFixed(1) + ' м³/ч';
+    document.getElementById('res_dc_fan_d').innerText = (D_fan > 0 && D_fan < 500) ? D_fan.toFixed(0) + ' мм' : '—';
+    document.getElementById('res_dc_air_v').innerText = v_air.toFixed(1) + ' м/с';
+    document.getElementById('res_dc_fan_p').innerText = (P_fan > 0 && P_fan < 100) ? P_fan.toFixed(2) + ' Вт' : '—';
+    
+    const fluxLevel = Math.min(1, Bd / steel.bsat);
+    drawField('fieldDC', 'dc', fluxLevel);
+    
+    document.getElementById('dc_results').classList.add('visible');
+}
+
+// ============================================================
+// 4. АД - РАСЧЁТ
+// ============================================================
+function calculateACPro() {
+    const P2 = 500;
+    const U = parseFloat(document.getElementById('ac_voltage').value);
+    const poles = parseInt(document.getElementById('ac_poles').value);
+    const cosPhi = parseFloat(document.getElementById('ac_cos').value);
+    const eff = parseFloat(document.getElementById('ac_eff').value) / 100;
+    const slip = parseFloat(document.getElementById('ac_slip').value) / 100;
+    const Z1 = parseInt(document.getElementById('ac_z1').value);
+    
+    const ins = getInsulationData('ac');
+    const cooling = getCoolingData('ac');
+    const steel = getSteelData('ac');
+    
+    // --- Электромагнитные ---
+    const sync_n = (50 * 60) / (poles / 2);
+    const n = sync_n * (1 - slip);
+    const P1 = P2 / eff;
+    const S1 = P1 / cosPhi;
+    const I = S1 / (Math.sqrt(3) * U);
+    const torque = P2 / (2 * Math.PI * n / 60);
+    
+    // --- Геометрия ---
+    let D1 = Math.pow(P2 / (n / 1000), 0.33) * 8 * 10;
+    D1 = Math.round(D1 / 5) * 5;
+    let L1 = D1 * 0.7;
+    L1 = Math.round(L1 / 5) * 5;
+    
+    const q_slots = Z1 / (poles * 3);
+    const A_desired = 200;
+    const u_p = Math.round((A_desired * Math.PI * D1 / 10) / (I * 3));
+    const y = Math.round(Z1 / poles);
+    
+    // --- Геометрия паза ---
+    const b_p = Math.round((Math.PI * D1 / Z1) * 0.5 * 10) / 10;
+    const h_p = Math.round(D1 * 0.18 * 10) / 10;
+    const S_p = b_p * h_p;
+    const wire_s = I / (3 * 5);
+    const S_cu = wire_s * u_p * 2;
+    const k_fill = S_cu / S_p;
+    
+    // --- Тепловой режим ---
+    const l_avg = L1 + D1 * 0.5;
+    const R_ph = rho_cu * (l_avg / 1000) * u_p * (Z1 / 3) / wire_s;
+    const P_cu = 3 * I * I * R_ph;
+    
+    const steelMassAC = Math.PI * (D1/1000) * (L1/1000) * 7850 * 0.6;
+    const P_steel = steel.loss * steelMassAC * (50/50) * 1.5;
+    
+    const P_loss = P_cu + P_steel;
+    
+    const D_ext = D1 * 1.5;
+    const S_cool = Math.PI * D_ext * L1 / 1e6;
+    const q_flux = P_loss / S_cool;
+    const alpha = cooling.alpha;
+    const dt = q_flux / alpha;
+    const t_actual = 40 + dt;
+    
+    // --- Пусковые ---
+    const k_start = 5 + (6 - poles/2) * 0.5;
+    const I_start = I * k_start;
+    const M_start = torque * (1.5 + 0.5 * (6 - poles/2));
+    const k_i_start = I_start / I;
+    const k_m_start = M_start / torque;
+    const t_start = (2 * Math.PI * n / 60) * (0.15) / (M_start - torque);
+    
+    // --- Вентилятор ---
+    const Q_air = P_loss / (1.2 * 1000 * 5);
+    const Q_air_m3h = Q_air * 3600;
+    const D_fan = Math.sqrt(Q_air / (Math.PI * 0.5 * cooling.v_air)) * 1000;
+    const v_air = cooling.v_air;
+    const P_fan = 0.5 * 1.2 * Q_air * (v_air * v_air) / 0.6;
+    
+    // --- Вывод ---
+    document.getElementById('res_ac_sync_n').innerText = sync_n + ' об/мин';
+    document.getElementById('res_ac_n').innerText = n.toFixed(0) + ' об/мин';
+    document.getElementById('res_ac_p1').innerText = P1.toFixed(1) + ' Вт';
+    document.getElementById('res_ac_i').innerText = I.toFixed(2) + ' А';
+    document.getElementById('res_ac_torque').innerText = torque.toFixed(2) + ' Н·м';
+    
+    document.getElementById('res_ac_d_stator').innerText = D1 + ' мм';
+    document.getElementById('res_ac_l_stator').innerText = L1 + ' мм';
+    document.getElementById('res_ac_u_p').innerText = u_p;
+    document.getElementById('res_ac_y').innerText = y;
+    document.getElementById('res_ac_bp').innerText = b_p.toFixed(1) + ' мм';
+    document.getElementById('res_ac_hp').innerText = h_p.toFixed(1) + ' мм';
+    document.getElementById('res_ac_sp').innerText = S_p.toFixed(2) + ' мм²';
+    document.getElementById('res_ac_scu').innerText = S_cu.toFixed(2) + ' мм²';
+    document.getElementById('res_ac_kfill').innerText = (k_fill * 100).toFixed(1) + '%';
+    
+    document.getElementById('res_ac_i_start').innerText = I_start.toFixed(2) + ' А';
+    document.getElementById('res_ac_m_start').innerText = M_start.toFixed(2) + ' Н·м';
+    document.getElementById('res_ac_k_i_start').innerText = k_i_start.toFixed(1) + '×';
+    document.getElementById('res_ac_k_m_start').innerText = k_m_start.toFixed(1) + '×';
+    document.getElementById('res_ac_t_start').innerText = t_start.toFixed(2) + ' с';
+    
+    document.getElementById('res_ac_pcu').innerText = P_cu.toFixed(2) + ' Вт';
+    document.getElementById('res_ac_psteel').innerText = P_steel.toFixed(2) + ' Вт';
+    document.getElementById('res_ac_ploss').innerText = P_loss.toFixed(2) + ' Вт';
+    document.getElementById('res_ac_scool').innerText = (S_cool * 1e4).toFixed(1) + ' см²';
+    document.getElementById('res_ac_q').innerText = q_flux.toFixed(0) + ' Вт/м²';
+    document.getElementById('res_ac_dt').innerText = dt.toFixed(1) + ' °C';
+    document.getElementById('res_ac_ins_class').innerText = ins.class + ' (' + ins.temp + '°C)';
+    document.getElementById('res_ac_tmax').innerText = ins.temp + ' °C';
+    
+    const status = getStatusInfo(t_actual, ins.temp);
+    const statusEl = document.getElementById('ac_thermal_status');
+    statusEl.innerHTML = `<div class="${status.status}">Статус: ${status.label} (запас ${Math.round(status.margin)}°C)</div>`;
+    
+    document.getElementById('res_ac_airflow').innerText = Q_air_m3h.toFixed(1) + ' м³/ч';
+    document.getElementById('res_ac_fan_d').innerText = (D_fan > 0 && D_fan < 500) ? D_fan.toFixed(0) + ' мм' : '—';
+    document.getElementById('res_ac_air_v').innerText = v_air.toFixed(1) + ' м/с';
+    document.getElementById('res_ac_fan_p').innerText = (P_fan > 0 && P_fan < 100) ? P_fan.toFixed(2) + ' Вт' : '—';
+    
+    const Bd_ac = 0.6;
+    const fluxLevel = Math.min(1, Bd_ac / steel.bsat);
+    drawField('fieldAC', 'ac', fluxLevel);
+    
+    document.getElementById('ac_results').classList.add('visible');
+}
+
+// ============================================================
+// 5. ИНИЦИАЛИЗАЦИЯ ИНТЕРФЕЙСА
+// ============================================================
+// Селекторы класса изоляции
+document.querySelectorAll('#dcInsulation button').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('#dcInsulation button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('dc_insulation_class').value = this.dataset.class;
+        document.getElementById('dc_insulation_temp').value = this.dataset.temp;
+    });
+});
+
+document.querySelectorAll('#acInsulation button').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('#acInsulation button').forEach(b => b.classList.remove('active', 'ac-active'));
+        this.classList.add('active', 'ac-active');
+        document.getElementById('ac_insulation_class').value = this.dataset.class;
+        document.getElementById('ac_insulation_temp').value = this.dataset.temp;
+    });
+});
+
+// Автоматический расчёт при загрузке (показывает пример)
+window.onload = function() {
+    // Показываем пример расчёта при загрузке
+    calculateDCPro();
+    calculateACPro();
+};
+</script>
+
+</body>
+</html>
