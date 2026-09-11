@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор расчета электродвигателей 500 Вт</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --primary-color: #2563eb;
+            --accent-color: #0d9488;
+            --border-color: #e5e7eb;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #1e3a8a;
+            margin-bottom: 30px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 1200px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            border: 1px solid var(--border-color);
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            color: #1e293b;
+        }
+        .dc-title { border-bottom-color: var(--primary-color); }
+        .ac-title { border-bottom-color: var(--accent-color); }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #4b5563;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        input:focus, select:focus {
+            outline: 2px solid #93c5fd;
+        }
+        .readonly-input {
+            background-color: #f3f4f6;
+            cursor: not-allowed;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        .btn-dc { background-color: var(--primary-color); }
+        .btn-dc:hover { background-color: #1d4ed8; }
+        .btn-ac { background-color: var(--accent-color); }
+        .btn-ac:hover { background-color: #0f766e; }
+        
+        .results {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .results h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #334155;
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            font-size: 0.9rem;
+        }
+        .result-row:last-child {
+            border-bottom: none;
+        }
+        .result-val {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .sub-section {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 2px solid var(--border-color);
+        }
+        .sub-section h5 {
+            margin: 0 0 10px 0;
+            color: #475569;
+        }
+        .warning {
+            color: #b45309;
+            background-color: #fffbeb;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            border-left: 3px solid #f59e0b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Инженерный калькулятор расчета электродвигателей (500 Вт)</h1>
+    
+    <div class="grid">
+        <!-- РАСЧЕТ ДВИГАТЕЛЯ ПОСТОЯННОГО ТОКА -->
+        <div class="card">
+            <div class="card-title dc-title">🔌 Двигатель постоянного тока (ДПТ)</div>
+            
+            <div class="input-group">
+                <label>Полезная мощность (P₂), Ватт</label>
+                <input type="number" value="500" class="readonly-input" readonly>
+            </div>
+            
+            <div class="input-group">
+                <label>Номинальное напряжение питания (U), В</label>
+                <input type="number" id="dc_voltage" value="24" min="12" max="400">
+            </div>
+            
+            <div class="input-group">
+                <label>Частота вращения (n), об/мин</label>
+                <input type="number" id="dc_speed" value="3000" min="500" max="10000">
+            </div>
+            
+            <div class="input-group">
+                <label>Предполагаемый КПД (η), %</label>
+                <input type="number" id="dc_eff" value="82" min="50" max="98">
+            </div>
+            
+            <div class="input-group">
+                <label>Плотность тока в обмотке (J), А/мм²</label>
+                <input type="number" id="dc_j" value="5" step="0.1" min="2" max="10">
+            </div>
+
+            <div class="input-group">
+                <label>Число пазов якоря (Z)</label>
+                <input type="number" id="dc_z" value="24" min="8" max="60">
+            </div>
+            
+            <button class="btn-dc" onclick="calculateDC()">Рассчитать ДПТ</button>
+            
+            <div class="results" id="dc_results" style="display:none;">
+                <h4>⚡ Электромагнитный расчёт:</h4>
+                <div class="result-row"><span>Потребляемая мощность (P₁):</span><span class="result-val" id="res_dc_p1">-</span></div>
+                <div class="result-row"><span>Номинальный ток нагрузки (I_ном):</span><span class="result-val" id="res_dc_i">-</span></div>
+                <div class="result-row"><span>Крутящий момент (M_ном):</span><span class="result-val" id="res_dc_torque">-</span></div>
+                <div class="result-row"><span>Диаметр провода по меди (d):</span><span class="result-val" id="res_dc_wire_d">-</span></div>
+                <div class="result-row"><span>ЭДС якоря (E):</span><span class="result-val" id="res_dc_eds">-</span></div>
+                
+                <div class="sub-section">
+                    <h5>🔧 Геометрия якоря и обмотки:</h5>
+                    <div class="result-row"><span>Диаметр якоря (D_я):</span><span class="result-val" id="res_dc_d_arm">-</span></div>
+                    <div class="result-row"><span>Длина якоря (L_я):</span><span class="result-val" id="res_dc_l_arm">-</span></div>
+                    <div class="result-row"><span>Число активных проводников (N):</span><span class="result-val" id="res_dc_N">-</span></div>
+                    <div class="result-row"><span>Число витков в секции (w_сек):</span><span class="result-val" id="res_dc_w_sec">-</span></div>
+                </div>
+
+                <div class="sub-section">
+                    <h5>📐 Геометрия паза якоря:</h5>
+                    <div class="result-row"><span>Ширина паза (b_п):</span><span class="result-val" id="res_dc_bp">-</span></div>
+                    <div class="result-row"><span>Высота паза (h_п):</span><span class="result-val" id="res_dc_hp">-</span></div>
+                    <div class="result-row"><span>Площадь паза (S_п):</span><span class="result-val" id="res_dc_sp">-</span></div>
+                    <div class="result-row"><span>Площадь меди в пазу (S_м):</span><span class="result-val" id="res_dc_scu">-</span></div>
+                    <div class="result-row"><span>Коэф. заполнения паза (k_зап):</span><span class="result-val" id="res_dc_kfill">-</span></div>
+                </div>
+
+                <div class="sub-section">
+                    <h5>🌡️ Тепловой режим:</h5>
+                    <div class="result-row"><span>Потери в меди якоря (P_м):</span><span class="result-val" id="res_dc_pcu">-</span></div>
+                    <div class="result-row"><span>Поверхность охлаждения якоря (S_охл):</span><span class="result-val" id="res_dc_scool">-</span></div>
+                    <div class="result-row"><span>Тепловой поток с поверхности (q):</span><span class="result-val" id="res_dc_q">-</span></div>
+                    <div class="result-row"><span>Ориентировочный перегрев (Δt):</span><span class="result-val" id="res_dc_dt">-</span></div>
+                    <div class="warning">⚠️ Перегрев до 60-80°C допустим для класса F</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- РАСЧЕТ ДВИГАТЕЛЯ ПЕРЕМЕННОГО ТОКА -->
+        <div class="card">
+            <div class="card-title ac-title">🌀 Асинхронный двигатель (АД)</div>
+            
+            <div class="input-group">
+                <label>Полезная мощность (P₂), Ватт</label>
+                <input type="number" value="500" class="readonly-input" readonly>
+            </div>
+            
+            <div class="input-group">
+                <label>Линейное напряжение сети (U), В</label>
+                <select id="ac_voltage">
+                    <option value="220" selected>220 В (1 фаза / 3 фазы треугольник)</option>
+                    <option value="380">380 В (3 фазы звезда)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Число полюсов статора (2p)</label>
+                <select id="ac_poles">
+                    <option value="2">2 (3000 об/мин)</option>
+                    <option value="4" selected>4 (1500 об/мин)</option>
+                    <option value="6">6 (1000 об/мин)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Коэффициент мощности (cos φ)</label>
+                <input type="number" id="ac_cos" value="0.78" step="0.01" min="0.5" max="0.99">
+            </div>
+            
+            <div class="input-group">
+                <label>Предполагаемый КПД (η), %</label>
+                <input type="number" id="ac_eff" value="75" min="50" max="98">
+            </div>
+            
+            <div class="input-group">
+                <label>Номинальное скольжение (s), %</label>
+                <input type="number" id="ac_slip" value="6" step="0.1" min="1" max="15">
+            </div>
+
+            <div class="input-group">
+                <label>Число пазов статора (Z₁)</label>
+                <input type="number" id="ac_z1" value="24" min="12" max="72">
+            </div>
+            
+            <button class="btn-ac" onclick="calculateAC()">Рассчитать АД</button>
+            
+            <div class="results" id="ac_results" style="display:none;">
+                <h4>⚡ Электромагнитный расчёт:</h4>
+                <div class="result-row"><span>Синхронная частота:</span><span class="result-val" id="res_ac_sync_n">-</span></div>
+                <div class="result-row"><span>Номинальная частота (n):</span><span class="result-val" id="res_ac_n">-</span></div>
+                <div class="result-row"><span>Активная мощность (P₁):</span><span class="result-val" id="res_ac_p1">-</span></div>
+                <div class="result-row"><span>Линейный ток (I_лин):</span><span class="result-val" id="res_ac_i">-</span></div>
+                <div class="result-row"><span>Крутящий момент (M_ном):</span><span class="result-val" id="res_ac_torque">-</span></div>
+                
+                <div class="sub-section">
+                    <h5>🔧 Геометрия статора и обмотки:</h5>
+                    <div class="result-row"><span>Диаметр расточки (D₁):</span><span class="result-val" id="res_ac_d_stator">-</span></div>
+                    <div class="result-row"><span>Длина пакета (L₁):</span><span class="result-val" id="res_ac_l_stator">-</span></div>
+                    <div class="result-row"><span>Проводников в пазу (u_п):</span><span class="result-val" id="res_ac_u_p">-</span></div>
+                    <div class="result-row"><span>Шаг обмотки (y):</span><span class="result-val" id="res_ac_y">-</span></div>
+                </div>
+
+                <div class="sub-section">
+                    <h5>📐 Геометрия паза статора:</h5>
+                    <div class="result-row"><span>Ширина паза (b_п):</span><span class="result-val" id="res_ac_bp">-</span></div>
+                    <div class="result-row"><span>Высота паза (h_п):</span><span class="result-val" id="res_ac_hp">-</span></div>
+                    <div class="result-row"><span>Площадь паза (S_п):</span><span class="result-val" id="res_ac_sp">-</span></div>
+                    <div class="result-row"><span>Площадь меди в пазу (S_м):</span><span class="result-val" id="res_ac_scu">-</span></div>
+                    <div class="result-row"><span>Коэф. заполнения паза:</span><span class="result-val" id="res_ac_kfill">-</span></div>
+                </div>
+
+                <div class="sub-section">
+                    <h5>🌡️ Тепловой режим статора:</h5>
+                    <div class="result-row"><span>Потери в меди статора (P_м):</span><span class="result-val" id="res_ac_pcu">-</span></div>
+                    <div class="result-row"><span>Поверхность охлаждения (S_охл):</span><span class="result-val" id="res_ac_scool">-</span></div>
+                    <div class="result-row"><span>Тепловой поток (q):</span><span class="result-val" id="res_ac_q">-</span></div>
+                    <div class="result-row"><span>Ориентировочный перегрев (Δt):</span><span class="result-val" id="res_ac_dt">-</span></div>
+                    <div class="warning">⚠️ Перегрев до 60-80°C допустим для класса F</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---- ДПТ ----
+    function calculateDC() {
+        const P2 = 500;
+        const U = parseFloat(document.getElementById('dc_voltage').value);
+        const n = parseFloat(document.getElementById('dc_speed').value);
+        const eff = parseFloat(document.getElementById('dc_eff').value) / 100;
+        const J = parseFloat(document.getElementById('dc_j').value);
+        const Z = parseInt(document.getElementById('dc_z').value);
+        
+        // Электромагнитные параметры
+        const P1 = P2 / eff;
+        const I = P1 / U;
+        const omega = 2 * Math.PI * n / 60;
+        const torque = P2 / omega;
+        const wire_s = (I / 2) / J;
+        const wire_d = 2 * Math.sqrt(wire_s / Math.PI);
+        const eds = U * 0.9;
+
+        // Геометрия якоря (эмпирика)
+        let D_arm = Math.pow(P2 / (n / 1000), 0.3) * 2.5 * 10;
+        D_arm = Math.round(D_arm / 5) * 5;
+        let L_arm = D_arm * 0.8;
+        L_arm = Math.round(L_arm / 5) * 5;
+        
+        // Число проводников
+        const Bd = 0.55;
+        const p = 1;
+        const a = 1;
+        const D_m = D_arm / 1000;
+        const L_m = L_arm / 1000;
+        const Phi = Bd * (Math.PI * D_m * L_m) / (2 * p);
+        let N = (eds * 60 * a) / (p * Phi * n);
+        N = Math.round(N / 10) * 10;
+        const w_sec = Math.round(N / 2 / Z);
+
+        // ---- Геометрия паза ----
+        // Ширина паза: b_п ≈ (π * D_arm / Z) * 0.4..0.5
+        const b_p = Math.round((Math.PI * D_arm / Z) * 0.42 * 10) / 10;
+        // Высота паза: h_п ≈ (0.2..0.3) * D_arm
+        const h_p = Math.round(D_arm * 0.22 * 10) / 10;
+        // Площадь паза (приближённо прямоугольник)
+        const S_p = b_p * h_p;
+        // Площадь меди в пазу: S_cu = (I/(2*J)) * (N / Z) / 2 (для двухслойной)
+        const S_cu = (wire_s * (N / Z)) / 2;
+        const k_fill = S_cu / S_p;
+
+        // ---- Тепловой режим ----
+        // Сопротивление обмотки якоря (приближённо)
+        const rho_cu = 0.0175; // Ом·мм²/м
+        const l_wire = N * (L_arm + D_arm) / 1000; // примерная длина
+        const R_arm = rho_cu * l_wire / (wire_s * 2); // с учётом двух ветвей
+        
+        // Потери в меди якоря
+        const P_cu = I * I * R_arm;
+        
+        // Поверхность охлаждения якоря (цилиндрическая + торцы)
+        const S_cool = Math.PI * D_arm * L_arm / 1e6 + 2 * Math.PI * (D_arm/2) * (D_arm/2) / 1e6;
+        
+        // Тепловой поток (Вт/м²)
+        const q_flux = P_cu / S_cool;
+        
+        // Ориентировочный перегрев (коэффициент теплоотдачи α ≈ 20..40 Вт/(м²·°C))
+        const alpha = 30;
+        const dt = q_flux / alpha;
+
+        // Вывод
+        document.getElementById('res_dc_p1').innerText = P1.toFixed(1) + ' Вт';
+        document.getElementById('res_dc_i').innerText = I.toFixed(2) + ' А';
+        document.getElementById('res_dc_torque').innerText = torque.toFixed(2) + ' Н·м';
+        document.getElementById('res_dc_wire_d').innerText = wire_d.toFixed(2) + ' мм';
+        document.getElementById('res_dc_eds').innerText = eds.toFixed(1) + ' В';
+        
+        document.getElementById('res_dc_d_arm').innerText = D_arm + ' мм';
+        document.getElementById('res_dc_l_arm').innerText = L_arm + ' мм';
+        document.getElementById('res_dc_N').innerText = N;
+        document.getElementById('res_dc_w_sec').innerText = w_sec;
+        
+        document.getElementById('res_dc_bp').innerText = b_p.toFixed(1) + ' мм';
+        document.getElementById('res_dc_hp').innerText = h_p.toFixed(1) + ' мм';
+        document.getElementById('res_dc_sp').innerText = S_p.toFixed(2) + ' мм²';
+        document.getElementById('res_dc_scu').innerText = S_cu.toFixed(2) + ' мм²';
+        document.getElementById('res_dc_kfill').innerText = (k_fill * 100).toFixed(1) + '%';
+        
+        document.getElementById('res_dc_pcu').innerText = P_cu.toFixed(2) + ' Вт';
+        document.getElementById('res_dc_scool').innerText = (S_cool * 1e4).toFixed(1) + ' см²';
+        document.getElementById('res_dc_q').innerText = q_flux.toFixed(0) + ' Вт/м²';
+        document.getElementById('res_dc_dt').innerText = dt.toFixed(1) + ' °C';
+        
+        document.getElementById('dc_results').style.display = 'block';
+    }
+
+    // ---- АД ----
+    function calculateAC() {
+        const P2 = 500;
+        const U = parseFloat(document.getElementById('ac_voltage').value);
+        const poles = parseInt(document.getElementById('ac_poles').value);
+        const cosPhi = parseFloat(document.getElementById('ac_cos').value);
+        const eff = parseFloat(document.getElementById('ac_eff').value) / 100;
+        const slip = parseFloat(document.getElementById('ac_slip').value) / 100;
+        const Z1 = parseInt(document.getElementById('ac_z1').value);
+        
+        const sync_n = (50 * 60) / (poles / 2);
+        const n = sync_n * (1 - slip);
+        const P1 = P2 / eff;
+        const S1 = P1 / cosPhi;
+        const I = S1 / (Math.sqrt(3) * U);
+        const torque = P2 / (2 * Math.PI * n / 60);
+
+        // Геометрия статора
+        let D1 = Math.pow(P2 / (n / 1000), 0.33) * 8 * 10;
+        D1 = Math.round(D1 / 5) * 5;
+        let L1 = D1 * 0.7;
+        L1 = Math.round(L1 / 5) * 5;
+        
+        const q_slots = Z1 / (poles * 3);
+        const A_desired = 200;
+        const u_p = Math.round((A_desired * Math.PI * D1 / 10) / (I * 3));
+        const y = Math.round(Z1 / poles);
+
+        // ---- Геометрия паза статора ----
+        const b_p = Math.round((Math.PI * D1 / Z1) * 0.5 * 10) / 10;
+        const h_p = Math.round(D1 * 0.18 * 10) / 10;
+        const S_p = b_p * h_p;
+        // Площадь меди в пазу (для 3-фазной обмотки)
+        const wire_s = I / (3 * 5); // J=5 А/мм²
+        const S_cu = wire_s * u_p * 2; // два слоя
+        const k_fill = S_cu / S_p;
+
+        // ---- Тепловой режим статора ----
+        // Длина витка (приближённо)
+        const l_avg = L1 + D1 * 0.5;
+        const R_ph = 0.0175 * (l_avg / 1000) * u_p * (Z1 / 3) / wire_s;
+        const P_cu = 3 * I * I * R_ph;
+        
+        // Поверхность охлаждения статора (внешняя цилиндрическая)
+        const D_ext = D1 * 1.5; // внешний диаметр статора (приближённо)
+        const S_cool = Math.PI * D_ext * L1 / 1e6;
+        
+        const q_flux = P_cu / S_cool;
+        const alpha = 25; // для статора с обдувом чуть меньше
+        const dt = q_flux / alpha;
+
+        // Вывод
+        document.getElementById('res_ac_sync_n').innerText = sync_n + ' об/мин';
+        document.getElementById('res_ac_n').innerText = n.toFixed(0) + ' об/мин';
+        document.getElementById('res_ac_p1').innerText = P1.toFixed(1) + ' Вт';
+        document.getElementById('res_ac_i').innerText = I.toFixed(2) + ' А';
+        document.getElementById('res_ac_torque').innerText = torque.toFixed(2) + ' Н·м';
+        
+        document.getElementById('res_ac_d_stator').innerText = D1 + ' мм';
+        document.getElementById('res_ac_l_stator').innerText = L1 + ' мм';
+        document.getElementById('res_ac_u_p').innerText = u_p;
+        document.getElementById('res_ac_y').innerText = y;
+        
+        document.getElementById('res_ac_bp').innerText = b_p.toFixed(1) + ' мм';
+        document.getElementById('res_ac_hp').innerText = h_p.toFixed(1) + ' мм';
+        document.getElementById('res_ac_sp').innerText = S_p.toFixed(2) + ' мм²';
+        document.getElementById('res_ac_scu').innerText = S_cu.toFixed(2) + ' мм²';
+        document.getElementById('res_ac_kfill').innerText = (k_fill * 100).toFixed(1) + '%';
+        
+        document.getElementById('res_ac_pcu').innerText = P_cu.toFixed(2) + ' Вт';
+        document.getElementById('res_ac_scool').innerText = (S_cool * 1e4).toFixed(1) + ' см²';
+        document.getElementById('res_ac_q').innerText = q_flux.toFixed(0) + ' Вт/м²';
+        document.getElementById('res_ac_dt').innerText = dt.toFixed(1) + ' °C';
+        
+        document.getElementById('ac_results').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
