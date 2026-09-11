@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тепловая карта электродвигателей</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f0f4f8;
+            padding: 20px;
+            color: #1e293b;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #0f172a;
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 1100px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #e2e8f0;
+        }
+        .dc-title { border-bottom-color: #2563eb; }
+        .ac-title { border-bottom-color: #0d9488; }
+        
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1.2 / 1;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        .canvas-wrapper canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 20px;
+            margin-top: 16px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .control-group label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #475569;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            accent-color: #2563eb;
+        }
+        .control-group .value-display {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #0f172a;
+            text-align: right;
+        }
+        .control-group .temp-bar {
+            height: 6px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #22c55e, #eab308, #ef4444);
+            margin-top: 2px;
+        }
+        
+        .legend {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+            padding: 8px 12px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            flex-wrap: wrap;
+        }
+        .legend-gradient {
+            flex: 1;
+            min-width: 120px;
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(to right, #22c55e, #eab308, #ef4444, #dc2626, #7f1d1d);
+        }
+        .legend-labels {
+            display: flex;
+            justify-content: space-between;
+            flex: 1;
+            font-size: 0.7rem;
+            color: #475569;
+        }
+        
+        .info-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 12px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            font-size: 0.82rem;
+        }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+        .info-item:last-child { border-bottom: none; }
+        .info-label { color: #475569; }
+        .info-value { font-weight: 700; }
+        .danger { color: #dc2626; }
+        .warning { color: #eab308; }
+        .safe { color: #22c55e; }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .status-safe { background: #dcfce7; color: #166534; }
+        .status-warning { background: #fef9c3; color: #854d0e; }
+        .status-danger { background: #fee2e2; color: #991b1b; }
+        
+        .temp-summary {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .temp-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        
+        @media (max-width: 600px) {
+            .controls { grid-template-columns: 1fr; }
+            .info-panel { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🌡️ Тепловые карты электродвигателей</h1>
+    
+    <div class="main-grid">
+        <!-- ДПТ -->
+        <div class="card">
+            <div class="card-title dc-title">🔌 Двигатель постоянного тока (ДПТ)</div>
+            <div class="canvas-wrapper">
+                <canvas id="canvasDC" width="600" height="500"></canvas>
+            </div>
+            
+            <div class="controls" id="dcControls">
+                <div class="control-group">
+                    <label>Обмотка якоря (пазовая часть)</label>
+                    <input type="range" id="dc_temp1" min="40" max="180" value="85">
+                    <div class="value-display" id="dc_val1">85°C</div>
+                </div>
+                <div class="control-group">
+                    <label>Коллектор (рабочая поверхность)</label>
+                    <input type="range" id="dc_temp2" min="40" max="120" value="72">
+                    <div class="value-display" id="dc_val2">72°C</div>
+                </div>
+                <div class="control-group">
+                    <label>Щётки (контактная зона)</label>
+                    <input type="range" id="dc_temp3" min="40" max="110" value="68">
+                    <div class="value-display" id="dc_val3">68°C</div>
+                </div>
+                <div class="control-group">
+                    <label>Підшипниковий вузол</label>
+                    <input type="range" id="dc_temp4" min="40" max="110" value="62">
+                    <div class="value-display" id="dc_val4">62°C</div>
+                </div>
+                <div class="control-group">
+                    <label>Магнітна система (осердя)</label>
+                    <input type="range" id="dc_temp5" min="40" max="140" value="78">
+                    <div class="value-display" id="dc_val5">78°C</div>
+                </div>
+                <div class="control-group">
+                    <label>Корпус (поверхня охолодження)</label>
+                    <input type="range" id="dc_temp6" min="30" max="100" value="56">
+                    <div class="value-display" id="dc_val6">56°C</div>
+                </div>
+            </div>
+            
+            <div class="info-panel" id="dcInfo">
+                <div class="info-item"><span class="info-label">Максимальная температура:</span><span class="info-value" id="dc_max">85°C</span></div>
+                <div class="info-item"><span class="info-label">Класс изоляции:</span><span class="info-value">F (155°C)</span></div>
+                <div class="info-item"><span class="info-label">Статус:</span><span class="info-value" id="dc_status"><span class="status-badge status-safe">✅ Норма</span></span></div>
+                <div class="info-item"><span class="info-label">Запас до критической:</span><span class="info-value" id="dc_margin">70°C</span></div>
+            </div>
+            
+            <div class="legend">
+                <span>🌡️ Температура:</span>
+                <div class="legend-gradient"></div>
+                <span style="font-weight:600;">40°C</span>
+                <span style="font-weight:600;">80°C</span>
+                <span style="font-weight:600;">120°C</span>
+                <span style="font-weight:600; color:#dc2626;">160°C</span>
+            </div>
+        </div>
+        
+        <!-- АД - ИСПРАВЛЕННЫЙ -->
+        <div class="card">
+            <div class="card-title ac-title">🌀 Асинхронный двигатель (АД)</div>
+            <div class="canvas-wrapper">
+                <canvas id="canvasAC" width="600" height="500"></canvas>
+            </div>
+            
+            <div class="controls" id="acControls">
+                <div class="control-group">
+                    <label>Обмотка статора (лобовая часть)</label>
+                    <input type="range" id="ac_temp1" min="40" max="180" value="82">
+                    <div class="value-display" id="ac_val1">82°C</div>
+                </div>
+                <div class="control-group">
+                    <label>Обмотка статора (пазовая часть)</label>
+                    <input type="range" id="ac_temp2" min="40" max="180" value="88">
+                    <div class="value-display" id="ac_val2">88°C</div>
+                </div>
+                <div class="control-group">
+                    <label>Сердечник статора (ярмо/зубцы)</label>
+                    <input type="range" id="ac_temp3" min="40" max="155" value="75">
+                    <div class="value-display" id="ac_val3">75°C</div>
+                </div>
+                <div class="control-group">
+                    <label>Підшипниковий вузол</label>
+                    <input type="range" id="ac_temp4" min="40" max="110" value="65">
+                    <div class="value-display" id="ac_val4">65°C</div>
+                </div>
+                <div class="control-group">
+                    <label>Клітка ротора (короткозамкнена)</label>
+                    <input type="range" id="ac_temp5" min="40" max="200" value="95">
+                    <div class="value-display" id="ac_val5">95°C</div>
+                </div>
+                <div class="control-group">
+                    <label>Корпус (ребра охолодження)</label>
+                    <input type="range" id="ac_temp6" min="30" max="110" value="60">
+                    <div class="value-display" id="ac_val6">60°C</div>
+                </div>
+            </div>
+            
+            <div class="info-panel" id="acInfo">
+                <div class="info-item"><span class="info-label">Максимальная температура:</span><span class="info-value" id="ac_max">95°C</span></div>
+                <div class="info-item"><span class="info-label">Класс изоляции:</span><span class="info-value">F (155°C)</span></div>
+                <div class="info-item"><span class="info-label">Статус:</span><span class="info-value" id="ac_status"><span class="status-badge status-safe">✅ Норма</span></span></div>
+                <div class="info-item"><span class="info-label">Запас до критической:</span><span class="info-value" id="ac_margin">60°C</span></div>
+            </div>
+            
+            <div class="legend">
+                <span>🌡️ Температура:</span>
+                <div class="legend-gradient"></div>
+                <span style="font-weight:600;">40°C</span>
+                <span style="font-weight:600;">80°C</span>
+                <span style="font-weight:600;">120°C</span>
+                <span style="font-weight:600; color:#dc2626;">160°C</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// 1. УТИЛИТЫ ДЛЯ ЦВЕТОВОЙ КАРТЫ
+// ============================================================
+function temperatureToColor(temp, minTemp = 40, maxTemp = 160) {
+    let t = (temp - minTemp) / (maxTemp - minTemp);
+    t = Math.max(0, Math.min(1, t));
+    
+    let r, g, b;
+    if (t < 0.25) {
+        const u = t / 0.25;
+        r = 34 + u * 180;
+        g = 197 - u * 60;
+        b = 94 - u * 50;
+    } else if (t < 0.50) {
+        const u = (t - 0.25) / 0.25;
+        r = 214 + u * 41;
+        g = 137 - u * 37;
+        b = 44 - u * 10;
+    } else if (t < 0.75) {
+        const u = (t - 0.50) / 0.25;
+        r = 255;
+        g = 100 - u * 60;
+        b = 34 - u * 30;
+    } else {
+        const u = (t - 0.75) / 0.25;
+        r = 255 - u * 100;
+        g = 40 - u * 30;
+        b = 4 - u * 3;
+    }
+    return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+}
+
+function getStatusInfo(temp, maxAllowed = 155) {
+    const margin = maxAllowed - temp;
+    if (margin > 30) return { status: 'safe', label: '✅ Норма', class: 'status-safe', margin: margin };
+    if (margin > 10) return { status: 'warning', label: '⚠️ Внимание', class: 'status-warning', margin: margin };
+    return { status: 'danger', label: '🔴 Критично!', class: 'status-danger', margin: margin };
+}
+
+// ============================================================
+// 2. ОТРИСОВКА ТЕПЛОВЫХ КАРТ
+// ============================================================
+function drawThermalMap(canvasId, temps, labels, criticalTemp = 155, isAC = false) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+    
+    ctx.clearRect(0, 0, W, H);
+    
+    // ---- Фон ----
+    const grad = ctx.createRadialGradient(W/2, H/2, 50, W/2, H/2, W*0.7);
+    grad.addColorStop(0, '#1e293b');
+    grad.addColorStop(1, '#0f172a');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+    
+    // ---- Координаты точек (разные для ДПТ и АД) ----
+    let points;
+    if (isAC) {
+        // Точки для АД (без коллектора!)
+        points = [
+            { x: 0.25, y: 0.20, label: 'Обмотка статора\n(лобова)' },
+            { x: 0.55, y: 0.22, label: 'Обмотка статора\n(пазова)' },
+            { x: 0.35, y: 0.50, label: 'Сердечник\nстатора' },
+            { x: 0.75, y: 0.55, label: 'Підшипник' },
+            { x: 0.45, y: 0.75, label: 'Клітка\nротора' },
+            { x: 0.80, y: 0.78, label: 'Корпус' },
+        ];
+    } else {
+        // Точки для ДПТ (с коллектором)
+        points = [
+            { x: 0.30, y: 0.25, label: 'Обмотка якоря\n(пазова)' },
+            { x: 0.70, y: 0.20, label: 'Колектор' },
+            { x: 0.85, y: 0.35, label: 'Щітки' },
+            { x: 0.20, y: 0.55, label: 'Підшипник' },
+            { x: 0.45, y: 0.70, label: 'Магнітна\nсистема' },
+            { x: 0.75, y: 0.75, label: 'Корпус' },
+        ];
+    }
+    
+    // ---- Тепловые пятна ----
+    const tempMin = 30;
+    const tempMax = 200;
+    
+    for (let i = 0; i < Math.min(points.length, temps.length); i++) {
+        const pt = points[i];
+        const temp = temps[i];
+        const cx = pt.x * W;
+        const cy = pt.y * H;
+        const radius = Math.min(W, H) * 0.17;
+        
+        const grad2 = ctx.createRadialGradient(cx, cy, 2, cx, cy, radius);
+        const color = temperatureToColor(temp, tempMin, tempMax);
+        grad2.addColorStop(0, color);
+        grad2.addColorStop(0.6, color.replace('rgb', 'rgba').replace(')', ', 0.7)'));
+        grad2.addColorStop(1, 'rgba(30, 41, 59, 0)');
+        
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.fillStyle = grad2;
+        ctx.fill();
+    }
+    
+    // ---- Линии связей ----
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 6]);
+    for (let i = 0; i < Math.min(points.length, temps.length); i++) {
+        for (let j = i + 1; j < Math.min(points.length, temps.length); j++) {
+            ctx.beginPath();
+            ctx.moveTo(points[i].x * W, points[i].y * H);
+            ctx.lineTo(points[j].x * W, points[j].y * H);
+            ctx.stroke();
+        }
+    }
+    ctx.setLineDash([]);
+    
+    // ---- Изотермические контуры ----
+    for (let i = 0; i < Math.min(points.length, temps.length); i++) {
+        const pt = points[i];
+        const cx = pt.x * W;
+        const cy = pt.y * H;
+        const radii = [0.3, 0.6, 0.9];
+        for (let r of radii) {
+            const radius = Math.min(W, H) * 0.12 * r;
+            const alpha = 0.15 + 0.1 * (1 - r);
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+    }
+    
+    // ---- Маркеры точек ----
+    for (let i = 0; i < Math.min(points.length, temps.length); i++) {
+        const pt = points[i];
+        const temp = temps[i];
+        const cx = pt.x * W;
+        const cy = pt.y * H;
+        const color = temperatureToColor(temp, tempMin, tempMax);
+        const radius = 18;
+        
+        // Свечение
+        const glow = ctx.createRadialGradient(cx, cy, 2, cx, cy, radius * 2);
+        glow.addColorStop(0, 'rgba(255,255,255,0.3)');
+        glow.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius * 2, 0, Math.PI * 2);
+        ctx.fillStyle = glow;
+        ctx.fill();
+        
+        // Круг
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        
+        // Температура
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(Math.round(temp) + '°', cx, cy - 2);
+        
+        // Подпись
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        ctx.font = '9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        const labelLines = pt.label.split('\n');
+        let labelY = cy + radius + 6;
+        for (let line of labelLines) {
+            ctx.fillText(line, cx, labelY);
+            labelY += 12;
+        }
+    }
+    
+    // ---- Легенда на холсте ----
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
+    ctx.roundRect(W - 160, 16, 140, 30, 8);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Крит. ' + criticalTemp + '°C', W - 90, 32);
+    
+    const critY = 48;
+    ctx.beginPath();
+    ctx.moveTo(W - 140, critY);
+    ctx.lineTo(W - 20, critY);
+    ctx.strokeStyle = 'rgba(239, 68, 68, 0.6)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.8)';
+    ctx.font = '8px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('Предел', W - 16, critY - 2);
+}
+
+// Полифилл для roundRect
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+        if (r > w/2) r = w/2;
+        if (r > h/2) r = h/2;
+        this.moveTo(x + r, y);
+        this.arcTo(x + w, y, x + w, y + h, r);
+        this.arcTo(x + w, y + h, x, y + h, r);
+        this.arcTo(x, y + h, y, x + r, r);
+        this.arcTo(x, y, x + w, y, r);
+        return this;
+    };
+}
+
+// ============================================================
+// 3. ОБНОВЛЕНИЕ ДАННЫХ
+// ============================================================
+function updateDC() {
+    const temps = [
+        parseFloat(document.getElementById('dc_temp1').value),
+        parseFloat(document.getElementById('dc_temp2').value),
+        parseFloat(document.getElementById('dc_temp3').value),
+        parseFloat(document.getElementById('dc_temp4').value),
+        parseFloat(document.getElementById('dc_temp5').value),
+        parseFloat(document.getElementById('dc_temp6').value),
+    ];
+    
+    document.getElementById('dc_val1').textContent = temps[0] + '°C';
+    document.getElementById('dc_val2').textContent = temps[1] + '°C';
+    document.getElementById('dc_val3').textContent = temps[2] + '°C';
+    document.getElementById('dc_val4').textContent = temps[3] + '°C';
+    document.getElementById('dc_val5').textContent = temps[4] + '°C';
+    document.getElementById('dc_val6').textContent = temps[5] + '°C';
+    
+    const maxTemp = Math.max(...temps);
+    document.getElementById('dc_max').textContent = maxTemp + '°C';
+    
+    const critTemp = 155;
+    const status = getStatusInfo(maxTemp, critTemp);
+    document.getElementById('dc_status').innerHTML = `<span class="status-badge ${status.class}">${status.label}</span>`;
+    document.getElementById('dc_margin').textContent = Math.round(status.margin) + '°C';
+    document.getElementById('dc_margin').className = 'info-value ' + 
+        (status.status === 'safe' ? 'safe' : status.status === 'warning' ? 'warning' : 'danger');
+    
+    drawThermalMap('canvasDC', temps, [], critTemp, false);
+}
+
+function updateAC() {
+    const temps = [
+        parseFloat(document.getElementById('ac_temp1').value),
+        parseFloat(document.getElementById('ac_temp2').value),
+        parseFloat(document.getElementById('ac_temp3').value),
+        parseFloat(document.getElementById('ac_temp4').value),
+        parseFloat(document.getElementById('ac_temp5').value),
+        parseFloat(document.getElementById('ac_temp6').value),
+    ];
+    
+    document.getElementById('ac_val1').textContent = temps[0] + '°C';
+    document.getElementById('ac_val2').textContent = temps[1] + '°C';
+    document.getElementById('ac_val3').textContent = temps[2] + '°C';
+    document.getElementById('ac_val4').textContent = temps[3] + '°C';
+    document.getElementById('ac_val5').textContent = temps[4] + '°C';
+    document.getElementById('ac_val6').textContent = temps[5] + '°C';
+    
+    const maxTemp = Math.max(...temps);
+    document.getElementById('ac_max').textContent = maxTemp + '°C';
+    
+    const critTemp = 155;
+    const status = getStatusInfo(maxTemp, critTemp);
+    document.getElementById('ac_status').innerHTML = `<span class="status-badge ${status.class}">${status.label}</span>`;
+    document.getElementById('ac_margin').textContent = Math.round(status.margin) + '°C';
+    document.getElementById('ac_margin').className = 'info-value ' + 
+        (status.status === 'safe' ? 'safe' : status.status === 'warning' ? 'warning' : 'danger');
+    
+    // Передаём isAC = true
+    drawThermalMap('canvasAC', temps, [], critTemp, true);
+}
+
+// ============================================================
+// 4. ПОДПИСКА НА СОБЫТИЯ
+// ============================================================
+for (let i = 1; i <= 6; i++) {
+    document.getElementById('dc_temp' + i).addEventListener('input', updateDC);
+    document.getElementById('ac_temp' + i).addEventListener('input', updateAC);
+}
+
+// ============================================================
+// 5. ПЕРВОНАЧАЛЬНЫЙ ЗАПУСК
+// ============================================================
+updateDC();
+updateAC();
+
+window.addEventListener('resize', () => {
+    updateDC();
+    updateAC();
+});
+</script>
+</body>
+</html>
