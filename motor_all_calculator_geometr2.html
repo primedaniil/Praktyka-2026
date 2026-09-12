@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор розрахунку електродвигунів 500 Вт(PRO)</title>
+    <title>Калькулятор розрахунку електродвигунів 500 Вт (PRO)</title>
     <style>
         :root {
             --bg-color: #f4f7f6;
@@ -275,33 +275,33 @@
 <body>
 
 <div class="container">
-    <h1>🏭 Инженерный калькулятор электродвигателей (PRO)</h1>
-    <p class="subtitle">500 Вт · Расширенный расчёт с тепловыми, пусковыми и полевыми характеристиками</p>
+    <h1>🏭 Інженерний калькулятор електродвигунів (PRO)</h1>
+    <p class="subtitle">500 Вт · Розширений розрахунок з тепловими, пусковими та польовими характеристиками</p>
     
     <div class="grid">
         <!-- ДПТ -->
         <div class="card" id="dcCard">
-            <div class="card-title dc-title">🔌 Двигатель постоянного тока (ДПТ)</div>
+            <div class="card-title dc-title">🔌 Двигун постійного струму (ДПТ)</div>
             
             <div class="input-group">
-                <label>Полезная мощность (P₂), Вт</label>
+                <label>Корисна потужність (P₂), Вт</label>
                 <input type="number" value="500" class="readonly-input" readonly>
             </div>
             <div class="input-group">
-                <label>Номинальное напряжение (U), В</label>
+                <label>Номінальна напруга (U), В</label>
                 <input type="number" id="dc_voltage" value="24" min="12" max="400">
             </div>
             <div class="input-group">
-                <label>Частота вращения (n), об/мин</label>
+                <label>Частота обертання (n), об/хв</label>
                 <input type="number" id="dc_speed" value="3000" min="500" max="10000">
             </div>
             <div class="input-group">
-                <label>КПД (η), %</label>
+                <label>ККД (η), %</label>
                 <input type="number" id="dc_eff" value="82" min="50" max="98">
             </div>
             
             <div class="input-group">
-                <label>Класс изоляции (T_max)</label>
+                <label>Клас ізоляції (T_max)</label>
                 <div class="insulation-selector" id="dcInsulation">
                     <button data-class="A" data-temp="105">A</button>
                     <button data-class="E" data-temp="120">E</button>
@@ -315,150 +315,150 @@
             </div>
             
             <div class="input-group">
-                <label>Тип охлаждения</label>
+                <label>Тип охолодження</label>
                 <select id="dc_cooling">
-                    <option value="natural">Естественное (IC410)</option>
-                    <option value="forced" selected>Принудительное (IC411)</option>
-                    <option value="liquid">Жидкостное (IC71W)</option>
+                    <option value="natural">Природне (IC410)</option>
+                    <option value="forced" selected>Примусове (IC411)</option>
+                    <option value="liquid">Рідинне (IC71W)</option>
                 </select>
             </div>
             
             <div class="input-group">
-                <label>Плотность тока (J), А/мм²</label>
+                <label>Щільність струму (J), А/мм²</label>
                 <input type="number" id="dc_j" value="5" step="0.1" min="2" max="12">
             </div>
             <div class="input-group">
-                <label>Число пазов якоря (Z)</label>
+                <label>Число пазів якоря (Z)</label>
                 <input type="number" id="dc_z" value="24" min="8" max="60">
             </div>
             
             <div class="input-group">
-                <label>Материал магнитопровода</label>
+                <label>Матеріал магнітопроводу</label>
                 <select id="dc_steel">
                     <option value="M330" data-loss="2.1" data-bsat="1.5">M330 (2.1 Вт/кг)</option>
                     <option value="M400" data-loss="2.8" data-bsat="1.45" selected>M400 (2.8 Вт/кг)</option>
                     <option value="M600" data-loss="4.5" data-bsat="1.4">M600 (4.5 Вт/кг)</option>
-                    <option value="permalloy" data-loss="0.5" data-bsat="0.8">Пермаллой (0.5 Вт/кг)</option>
+                    <option value="permalloy" data-loss="0.5" data-bsat="0.8">Пермалой (0.5 Вт/кг)</option>
                 </select>
             </div>
             
-            <button class="btn-dc" onclick="calculateDCPro()">📊 Обновить рассчёт ДПТ</button>
+            <button class="btn-dc" onclick="calculateDCPro()">📊 Оновити розрахунок ДПТ</button>
             
             <div class="results" id="dc_results">
-                <h4>⚡ Электромагнитный расчёт</h4>
+                <h4>⚡ Електромагнітний розрахунок</h4>
                 <div id="dcBasicResults">
-                    <div class="result-row"><span>Потребляемая мощность (P₁):</span><span class="result-val" id="res_dc_p1">-</span></div>
-                    <div class="result-row"><span>Номинальный ток (I_ном):</span><span class="result-val" id="res_dc_i">-</span></div>
-                    <div class="result-row"><span>Крутящий момент (M_ном):</span><span class="result-val" id="res_dc_torque">-</span></div>
-                    <div class="result-row"><span>Диаметр провода (d):</span><span class="result-val" id="res_dc_wire_d">-</span></div>
-                    <div class="result-row"><span>ЭДС якоря (E):</span><span class="result-val" id="res_dc_eds">-</span></div>
+                    <div class="result-row"><span>Споживана потужність (P₁):</span><span class="result-val" id="res_dc_p1">-</span></div>
+                    <div class="result-row"><span>Номінальний струм (I_ном):</span><span class="result-val" id="res_dc_i">-</span></div>
+                    <div class="result-row"><span>Обертовий момент (M_ном):</span><span class="result-val" id="res_dc_torque">-</span></div>
+                    <div class="result-row"><span>Діаметр проводу (d):</span><span class="result-val" id="res_dc_wire_d">-</span></div>
+                    <div class="result-row"><span>ЕРС якоря (E):</span><span class="result-val" id="res_dc_eds">-</span></div>
                 </div>
                 
                 <div class="sub-section">
-                    <h5>🔧 Геометрия якоря и обмотки</h5>
-                    <div class="result-row"><span>Диаметр якоря (D_я):</span><span class="result-val" id="res_dc_d_arm">-</span></div>
-                    <div class="result-row"><span>Длина якоря (L_я):</span><span class="result-val" id="res_dc_l_arm">-</span></div>
-                    <div class="result-row"><span>Число проводников (N):</span><span class="result-val" id="res_dc_N">-</span></div>
-                    <div class="result-row"><span>Витков в секции (w_сек):</span><span class="result-val" id="res_dc_w_sec">-</span></div>
+                    <h5>🔧 Геометрія якоря та обмотки</h5>
+                    <div class="result-row"><span>Діаметр якоря (D_я):</span><span class="result-val" id="res_dc_d_arm">-</span></div>
+                    <div class="result-row"><span>Довжина якоря (L_я):</span><span class="result-val" id="res_dc_l_arm">-</span></div>
+                    <div class="result-row"><span>Число провідників (N):</span><span class="result-val" id="res_dc_N">-</span></div>
+                    <div class="result-row"><span>Витків у секції (w_сек):</span><span class="result-val" id="res_dc_w_sec">-</span></div>
                 </div>
                 
                 <div class="sub-section">
-                    <h5>📐 Геометрия паза</h5>
+                    <h5>📐 Геометрія паза</h5>
                     <div class="result-row"><span>Ширина паза (b_п):</span><span class="result-val" id="res_dc_bp">-</span></div>
-                    <div class="result-row"><span>Высота паза (h_п):</span><span class="result-val" id="res_dc_hp">-</span></div>
-                    <div class="result-row"><span>Площадь паза (S_п):</span><span class="result-val" id="res_dc_sp">-</span></div>
-                    <div class="result-row"><span>Площадь меди (S_м):</span><span class="result-val" id="res_dc_scu">-</span></div>
-                    <div class="result-row"><span>Коэф. заполнения (k_зап):</span><span class="result-val" id="res_dc_kfill">-</span></div>
+                    <div class="result-row"><span>Висота паза (h_п):</span><span class="result-val" id="res_dc_hp">-</span></div>
+                    <div class="result-row"><span>Площа паза (S_п):</span><span class="result-val" id="res_dc_sp">-</span></div>
+                    <div class="result-row"><span>Площа міді (S_м):</span><span class="result-val" id="res_dc_scu">-</span></div>
+                    <div class="result-row"><span>Коэф. заповнення (k_зап):</span><span class="result-val" id="res_dc_kfill">-</span></div>
                 </div>
                 
                 <div class="sub-section">
-                    <h5>🚀 Пусковые характеристики</h5>
-                    <div class="result-row"><span>Пусковой ток (I_пуск):</span><span class="result-val" id="res_dc_i_start">-</span></div>
-                    <div class="result-row"><span>Пусковой момент (M_пуск):</span><span class="result-val" id="res_dc_m_start">-</span></div>
-                    <div class="result-row"><span>Кратность пускового тока:</span><span class="result-val" id="res_dc_k_i_start">-</span></div>
-                    <div class="result-row"><span>Кратность пускового момента:</span><span class="result-val" id="res_dc_k_m_start">-</span></div>
-                    <div class="result-row"><span>Время пуска (t_пуск):</span><span class="result-val" id="res_dc_t_start">-</span></div>
+                    <h5>🚀 Пускові характеристики</h5>
+                    <div class="result-row"><span>Пусковий струм (I_пуск):</span><span class="result-val" id="res_dc_i_start">-</span></div>
+                    <div class="result-row"><span>Пусковий момент (M_пуск):</span><span class="result-val" id="res_dc_m_start">-</span></div>
+                    <div class="result-row"><span>Кратність пускового струму:</span><span class="result-val" id="res_dc_k_i_start">-</span></div>
+                    <div class="result-row"><span>Кратність пускового моменту:</span><span class="result-val" id="res_dc_k_m_start">-</span></div>
+                    <div class="result-row"><span>Час пуску (t_пуск):</span><span class="result-val" id="res_dc_t_start">-</span></div>
                 </div>
                 
                 <div class="sub-section">
-                    <h5>🌡️ Тепловой режим</h5>
-                    <div class="result-row"><span>Потери в меди (P_м):</span><span class="result-val" id="res_dc_pcu">-</span></div>
-                    <div class="result-row"><span>Потери в стали (P_ст):</span><span class="result-val" id="res_dc_psteel">-</span></div>
-                    <div class="result-row"><span>Суммарные потери (P_сум):</span><span class="result-val" id="res_dc_ploss">-</span></div>
-                    <div class="result-row"><span>Поверхность охлаждения (S_охл):</span><span class="result-val" id="res_dc_scool">-</span></div>
-                    <div class="result-row"><span>Тепловой поток (q):</span><span class="result-val" id="res_dc_q">-</span></div>
-                    <div class="result-row"><span>Перегрев (Δt):</span><span class="result-val" id="res_dc_dt">-</span></div>
-                    <div class="result-row"><span>Класс изоляции:</span><span class="result-val" id="res_dc_ins_class">-</span></div>
-                    <div class="result-row"><span>Допустимая T_max:</span><span class="result-val" id="res_dc_tmax">-</span></div>
+                    <h5>🌡️ Тепловий режим</h5>
+                    <div class="result-row"><span>Втрати в міді (P_м):</span><span class="result-val" id="res_dc_pcu">-</span></div>
+                    <div class="result-row"><span>Втрати в сталі (P_ст):</span><span class="result-val" id="res_dc_psteel">-</span></div>
+                    <div class="result-row"><span>Сумарні втрати (P_сум):</span><span class="result-val" id="res_dc_ploss">-</span></div>
+                    <div class="result-row"><span>Поверхня охолодження (S_охл):</span><span class="result-val" id="res_dc_scool">-</span></div>
+                    <div class="result-row"><span>Тепловий потік (q):</span><span class="result-val" id="res_dc_q">-</span></div>
+                    <div class="result-row"><span>Перегрів (Δt):</span><span class="result-val" id="res_dc_dt">-</span></div>
+                    <div class="result-row"><span>Клас ізоляції:</span><span class="result-val" id="res_dc_ins_class">-</span></div>
+                    <div class="result-row"><span>Допустима T_max:</span><span class="result-val" id="res_dc_tmax">-</span></div>
                     <div id="dc_thermal_status"></div>
                 </div>
                 
                 <div class="sub-section">
-                    <h5>🌀 Расчёт вентилятора (принудительное охлаждение)</h5>
-                    <div class="result-row"><span>Необходимый расход воздуха (Q):</span><span class="result-val" id="res_dc_airflow">-</span></div>
-                    <div class="result-row"><span>Диаметр вентилятора (D_вен):</span><span class="result-val" id="res_dc_fan_d">-</span></div>
-                    <div class="result-row"><span>Скорость воздуха (v_воз):</span><span class="result-val" id="res_dc_air_v">-</span></div>
-                    <div class="result-row"><span>Мощность вентилятора (P_вен):</span><span class="result-val" id="res_dc_fan_p">-</span></div>
+                    <h5>🌀 Розрахунок вентилятора (примусове охолодження)</h5>
+                    <div class="result-row"><span>Необхідна витрата повітря (Q):</span><span class="result-val" id="res_dc_airflow">-</span></div>
+                    <div class="result-row"><span>Діаметр вентилятора (D_вен):</span><span class="result-val" id="res_dc_fan_d">-</span></div>
+                    <div class="result-row"><span>Швидкість повітря (v_пов):</span><span class="result-val" id="res_dc_air_v">-</span></div>
+                    <div class="result-row"><span>Потужність вентилятора (P_вен):</span><span class="result-val" id="res_dc_fan_p">-</span></div>
                 </div>
                 
                 <div class="sub-section">
-                    <h5>🧲 Визуализация поля</h5>
+                    <h5>🧲 Візуалізація поля</h5>
                     <div class="field-visualization">
                         <canvas id="fieldDC" width="400" height="300"></canvas>
                     </div>
                     <div class="field-legend">
-                        <span>Индукция B:</span>
+                        <span>Індукція B:</span>
                         <div class="grad"></div>
                         <span>0.0 Тл</span>
                         <span style="font-weight:600;">1.5 Тл</span>
                     </div>
-                    <div style="font-size:0.6rem;color:#94a3b8;text-align:center;">Качественное распределение магнитного поля</div>
+                    <div style="font-size:0.6rem;color:#94a3b8;text-align:center;">Якісний розподіл магнітного поля</div>
                 </div>
             </div>
         </div>
         
         <!-- АД -->
         <div class="card" id="acCard">
-            <div class="card-title ac-title">🌀 Асинхронный двигатель (АД)</div>
+            <div class="card-title ac-title">🌀 Асинхронний двигун (АД)</div>
             
             <div class="input-group">
-                <label>Полезная мощность (P₂), Вт</label>
+                <label>Корисна потужність (P₂), Вт</label>
                 <input type="number" value="500" class="readonly-input" readonly>
             </div>
             <div class="input-group">
-                <label>Линейное напряжение (U), В</label>
+                <label>Лінійна напруга (U), В</label>
                 <select id="ac_voltage">
-                    <option value="220" selected>220 В (1фаз/3фаз треугольник)</option>
-                    <option value="380">380 В (3фаз звезда)</option>
+                    <option value="220" selected>220 В (1фаза/3фази трикутник)</option>
+                    <option value="380">380 В (3фази зірка)</option>
                 </select>
             </div>
             <div class="input-group">
-                <label>Число полюсов (2p)</label>
+                <label>Число полюсів (2p)</label>
                 <select id="ac_poles">
-                    <option value="2">2 (3000 об/мин)</option>
-                    <option value="4" selected>4 (1500 об/мин)</option>
-                    <option value="6">6 (1000 об/мин)</option>
+                    <option value="2">2 (3000 об/хв)</option>
+                    <option value="4" selected>4 (1500 об/хв)</option>
+                    <option value="6">6 (1000 об/хв)</option>
                 </select>
             </div>
             <div class="input-group">
-                <label>Коэффициент мощности (cos φ)</label>
+                <label>Коефіцієнт потужності (cos φ)</label>
                 <input type="number" id="ac_cos" value="0.78" step="0.01" min="0.5" max="0.99">
             </div>
             <div class="input-group">
-                <label>КПД (η), %</label>
+                <label>ККД (η), %</label>
                 <input type="number" id="ac_eff" value="75" min="50" max="98">
             </div>
             <div class="input-group">
-                <label>Номинальное скольжение (s), %</label>
+                <label>Номінальне ковзання (s), %</label>
                 <input type="number" id="ac_slip" value="6" step="0.1" min="1" max="15">
             </div>
             <div class="input-group">
-                <label>Число пазов статора (Z₁)</label>
+                <label>Число пазів статора (Z₁)</label>
                 <input type="number" id="ac_z1" value="24" min="12" max="72">
             </div>
             
             <div class="input-group">
-                <label>Класс изоляции (T_max)</label>
+                <label>Клас ізоляції (T_max)</label>
                 <div class="insulation-selector" id="acInsulation">
                     <button data-class="A" data-temp="105">A</button>
                     <button data-class="E" data-temp="120">E</button>
@@ -472,95 +472,95 @@
             </div>
             
             <div class="input-group">
-                <label>Тип охлаждения</label>
+                <label>Тип охолодження</label>
                 <select id="ac_cooling">
-                    <option value="natural">Естественное (IC410)</option>
-                    <option value="forced" selected>Принудительное (IC411)</option>
-                    <option value="liquid">Жидкостное (IC71W)</option>
+                    <option value="natural">Природне (IC410)</option>
+                    <option value="forced" selected>Примусове (IC411)</option>
+                    <option value="liquid">Рідинне (IC71W)</option>
                 </select>
             </div>
             
             <div class="input-group">
-                <label>Материал магнитопровода</label>
+                <label>Матеріал магнітопроводу</label>
                 <select id="ac_steel">
                     <option value="M330" data-loss="2.1" data-bsat="1.5">M330 (2.1 Вт/кг)</option>
                     <option value="M400" data-loss="2.8" data-bsat="1.45" selected>M400 (2.8 Вт/кг)</option>
                     <option value="M600" data-loss="4.5" data-bsat="1.4">M600 (4.5 Вт/кг)</option>
-                    <option value="permalloy" data-loss="0.5" data-bsat="0.8">Пермаллой (0.5 Вт/кг)</option>
+                    <option value="permalloy" data-loss="0.5" data-bsat="0.8">Пермалой (0.5 Вт/кг)</option>
                 </select>
             </div>
             
-            <button class="btn-ac" onclick="calculateACPro()">📊  Обновить рассчёт АД</button>
+            <button class="btn-ac" onclick="calculateACPro()">📊 Оновити розрахунок АД</button>
             
             <div class="results" id="ac_results">
-                <h4>⚡ Электромагнитный расчёт</h4>
+                <h4>⚡ Електромагнітний розрахунок</h4>
                 <div id="acBasicResults">
-                    <div class="result-row"><span>Синхронная частота:</span><span class="result-val" id="res_ac_sync_n">-</span></div>
-                    <div class="result-row"><span>Номинальная частота (n):</span><span class="result-val" id="res_ac_n">-</span></div>
-                    <div class="result-row"><span>Активная мощность (P₁):</span><span class="result-val" id="res_ac_p1">-</span></div>
-                    <div class="result-row"><span>Линейный ток (I_лин):</span><span class="result-val" id="res_ac_i">-</span></div>
-                    <div class="result-row"><span>Крутящий момент (M_ном):</span><span class="result-val" id="res_ac_torque">-</span></div>
+                    <div class="result-row"><span>Синхронна частота:</span><span class="result-val" id="res_ac_sync_n">-</span></div>
+                    <div class="result-row"><span>Номінальна частота (n):</span><span class="result-val" id="res_ac_n">-</span></div>
+                    <div class="result-row"><span>Активна потужність (P₁):</span><span class="result-val" id="res_ac_p1">-</span></div>
+                    <div class="result-row"><span>Лінійний струм (I_лін):</span><span class="result-val" id="res_ac_i">-</span></div>
+                    <div class="result-row"><span>Обертовий момент (M_ном):</span><span class="result-val" id="res_ac_torque">-</span></div>
                 </div>
                 
                 <div class="sub-section">
-                    <h5>🔧 Геометрия статора</h5>
-                    <div class="result-row"><span>Диаметр расточки (D₁):</span><span class="result-val" id="res_ac_d_stator">-</span></div>
-                    <div class="result-row"><span>Длина пакета (L₁):</span><span class="result-val" id="res_ac_l_stator">-</span></div>
-                    <div class="result-row"><span>Проводников в пазу (u_п):</span><span class="result-val" id="res_ac_u_p">-</span></div>
-                    <div class="result-row"><span>Шаг обмотки (y):</span><span class="result-val" id="res_ac_y">-</span></div>
+                    <h5>🔧 Геометрія статора</h5>
+                    <div class="result-row"><span>Діаметр розточки (D₁):</span><span class="result-val" id="res_ac_d_stator">-</span></div>
+                    <div class="result-row"><span>Довжина пакета (L₁):</span><span class="result-val" id="res_ac_l_stator">-</span></div>
+                    <div class="result-row"><span>Провідників у пазу (u_п):</span><span class="result-val" id="res_ac_u_p">-</span></div>
+                    <div class="result-row"><span>Крок обмотки (y):</span><span class="result-val" id="res_ac_y">-</span></div>
                 </div>
                 
                 <div class="sub-section">
-                    <h5>📐 Геометрия паза статора</h5>
+                    <h5>📐 Геометрія паза статора</h5>
                     <div class="result-row"><span>Ширина паза (b_п):</span><span class="result-val" id="res_ac_bp">-</span></div>
-                    <div class="result-row"><span>Высота паза (h_п):</span><span class="result-val" id="res_ac_hp">-</span></div>
-                    <div class="result-row"><span>Площадь паза (S_п):</span><span class="result-val" id="res_ac_sp">-</span></div>
-                    <div class="result-row"><span>Площадь меди (S_м):</span><span class="result-val" id="res_ac_scu">-</span></div>
-                    <div class="result-row"><span>Коэф. заполнения:</span><span class="result-val" id="res_ac_kfill">-</span></div>
+                    <div class="result-row"><span>Висота паза (h_п):</span><span class="result-val" id="res_ac_hp">-</span></div>
+                    <div class="result-row"><span>Площа паза (S_п):</span><span class="result-val" id="res_ac_sp">-</span></div>
+                    <div class="result-row"><span>Площа міді (S_м):</span><span class="result-val" id="res_ac_scu">-</span></div>
+                    <div class="result-row"><span>Коэф. заповнення:</span><span class="result-val" id="res_ac_kfill">-</span></div>
                 </div>
                 
                 <div class="sub-section">
-                    <h5>🚀 Пусковые характеристики</h5>
-                    <div class="result-row"><span>Пусковой ток (I_пуск):</span><span class="result-val" id="res_ac_i_start">-</span></div>
-                    <div class="result-row"><span>Пусковой момент (M_пуск):</span><span class="result-val" id="res_ac_m_start">-</span></div>
-                    <div class="result-row"><span>Кратность пускового тока:</span><span class="result-val" id="res_ac_k_i_start">-</span></div>
-                    <div class="result-row"><span>Кратность пускового момента:</span><span class="result-val" id="res_ac_k_m_start">-</span></div>
-                    <div class="result-row"><span>Время пуска (t_пуск):</span><span class="result-val" id="res_ac_t_start">-</span></div>
+                    <h5>🚀 Пускові характеристики</h5>
+                    <div class="result-row"><span>Пусковий струм (I_пуск):</span><span class="result-val" id="res_ac_i_start">-</span></div>
+                    <div class="result-row"><span>Пусковий момент (M_пуск):</span><span class="result-val" id="res_ac_m_start">-</span></div>
+                    <div class="result-row"><span>Кратність пускового струму:</span><span class="result-val" id="res_ac_k_i_start">-</span></div>
+                    <div class="result-row"><span>Кратність пускового моменту:</span><span class="result-val" id="res_ac_k_m_start">-</span></div>
+                    <div class="result-row"><span>Час пуску (t_пуск):</span><span class="result-val" id="res_ac_t_start">-</span></div>
                 </div>
                 
                 <div class="sub-section">
-                    <h5>🌡️ Тепловой режим</h5>
-                    <div class="result-row"><span>Потери в меди (P_м):</span><span class="result-val" id="res_ac_pcu">-</span></div>
-                    <div class="result-row"><span>Потери в стали (P_ст):</span><span class="result-val" id="res_ac_psteel">-</span></div>
-                    <div class="result-row"><span>Суммарные потери (P_сум):</span><span class="result-val" id="res_ac_ploss">-</span></div>
-                    <div class="result-row"><span>Поверхность охлаждения (S_охл):</span><span class="result-val" id="res_ac_scool">-</span></div>
-                    <div class="result-row"><span>Тепловой поток (q):</span><span class="result-val" id="res_ac_q">-</span></div>
-                    <div class="result-row"><span>Перегрев (Δt):</span><span class="result-val" id="res_ac_dt">-</span></div>
-                    <div class="result-row"><span>Класс изоляции:</span><span class="result-val" id="res_ac_ins_class">-</span></div>
-                    <div class="result-row"><span>Допустимая T_max:</span><span class="result-val" id="res_ac_tmax">-</span></div>
+                    <h5>🌡️ Тепловий режим</h5>
+                    <div class="result-row"><span>Втрати в міді (P_м):</span><span class="result-val" id="res_ac_pcu">-</span></div>
+                    <div class="result-row"><span>Втрати в сталі (P_ст):</span><span class="result-val" id="res_ac_psteel">-</span></div>
+                    <div class="result-row"><span>Сумарні втрати (P_сум):</span><span class="result-val" id="res_ac_ploss">-</span></div>
+                    <div class="result-row"><span>Поверхня охолодження (S_охл):</span><span class="result-val" id="res_ac_scool">-</span></div>
+                    <div class="result-row"><span>Тепловий потік (q):</span><span class="result-val" id="res_ac_q">-</span></div>
+                    <div class="result-row"><span>Перегрів (Δt):</span><span class="result-val" id="res_ac_dt">-</span></div>
+                    <div class="result-row"><span>Клас ізоляції:</span><span class="result-val" id="res_ac_ins_class">-</span></div>
+                    <div class="result-row"><span>Допустима T_max:</span><span class="result-val" id="res_ac_tmax">-</span></div>
                     <div id="ac_thermal_status"></div>
                 </div>
                 
                 <div class="sub-section">
-                    <h5>🌀 Расчёт вентилятора (принудительное охлаждение)</h5>
-                    <div class="result-row"><span>Необходимый расход воздуха (Q):</span><span class="result-val" id="res_ac_airflow">-</span></div>
-                    <div class="result-row"><span>Диаметр вентилятора (D_вен):</span><span class="result-val" id="res_ac_fan_d">-</span></div>
-                    <div class="result-row"><span>Скорость воздуха (v_воз):</span><span class="result-val" id="res_ac_air_v">-</span></div>
-                    <div class="result-row"><span>Мощность вентилятора (P_вен):</span><span class="result-val" id="res_ac_fan_p">-</span></div>
+                    <h5>🌀 Розрахунок вентилятора (примусове охолодження)</h5>
+                    <div class="result-row"><span>Необхідна витрата повітря (Q):</span><span class="result-val" id="res_ac_airflow">-</span></div>
+                    <div class="result-row"><span>Діаметр вентилятора (D_вен):</span><span class="result-val" id="res_ac_fan_d">-</span></div>
+                    <div class="result-row"><span>Швидкість повітря (v_пов):</span><span class="result-val" id="res_ac_air_v">-</span></div>
+                    <div class="result-row"><span>Потужність вентилятора (P_вен):</span><span class="result-val" id="res_ac_fan_p">-</span></div>
                 </div>
                 
                 <div class="sub-section">
-                    <h5>🧲 Визуализация поля</h5>
+                    <h5>🧲 Візуалізація поля</h5>
                     <div class="field-visualization">
                         <canvas id="fieldAC" width="400" height="300"></canvas>
                     </div>
                     <div class="field-legend">
-                        <span>Индукция B:</span>
+                        <span>Індукція B:</span>
                         <div class="grad"></div>
                         <span>0.0 Тл</span>
                         <span style="font-weight:600;">1.5 Тл</span>
                     </div>
-                    <div style="font-size:0.6rem;color:#94a3b8;text-align:center;">Качественное распределение магнитного поля</div>
+                    <div style="font-size:0.6rem;color:#94a3b8;text-align:center;">Якісний розподіл магнітного поля</div>
                 </div>
             </div>
         </div>
@@ -569,7 +569,7 @@
 
 <script>
 // ============================================================
-// 1. УТИЛИТЫ
+// 1. УТИЛІТИ
 // ============================================================
 const rho_cu = 0.0175;
 
@@ -587,7 +587,7 @@ function getCoolingData(prefix) {
         type: type, 
         alpha: alphas[type] || 25,
         v_air: v_air[type] || 0.5,
-        label: { natural: 'Естественное', forced: 'Принудительное', liquid: 'Жидкостное' }[type]
+        label: { natural: 'Природне', forced: 'Примусове', liquid: 'Рідинне' }[type]
     };
 }
 
@@ -601,12 +601,12 @@ function getSteelData(prefix) {
 function getStatusInfo(temp, maxAllowed) {
     const margin = maxAllowed - temp;
     if (margin > 30) return { status: 'safe', label: '✅ Норма', class: 'status-safe', margin: margin };
-    if (margin > 10) return { status: 'warning', label: '⚠️ Внимание', class: 'status-warning', margin: margin };
+    if (margin > 10) return { status: 'warning', label: '⚠️ Увага', class: 'status-warning', margin: margin };
     return { status: 'danger', label: '🔴 Критично!', class: 'status-danger', margin: margin };
 }
 
 // ============================================================
-// 2. ВИЗУАЛИЗАЦИЯ ПОЛЯ
+// 2. ВІЗУАЛІЗАЦІЯ ПОЛЯ
 // ============================================================
 function drawField(canvasId, type, fluxLevel) {
     const canvas = document.getElementById(canvasId);
@@ -684,13 +684,13 @@ function drawField(canvasId, type, fluxLevel) {
     ctx.font = '9px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
-    ctx.fillText(type === 'dc' ? 'Якорь' : 'Ротор', cx, cy - rInner + 12);
+    ctx.fillText(type === 'dc' ? 'Якір' : 'Ротор', cx, cy - rInner + 12);
     ctx.textBaseline = 'top';
     ctx.fillText(type === 'dc' ? 'Станина' : 'Статор', cx, cy - R + 14);
 }
 
 // ============================================================
-// 3. ДПТ - РАСЧЁТ
+// 3. ДПТ - РОЗРАХУНОК
 // ============================================================
 function calculateDCPro() {
     const P2 = 500;
@@ -704,7 +704,7 @@ function calculateDCPro() {
     const cooling = getCoolingData('dc');
     const steel = getSteelData('dc');
     
-    // --- Электромагнитные ---
+    // --- Електромагнітні ---
     const P1 = P2 / eff;
     const I = P1 / U;
     const omega = 2 * Math.PI * n / 60;
@@ -713,7 +713,7 @@ function calculateDCPro() {
     const wire_d = 2 * Math.sqrt(wire_s / Math.PI);
     const eds = U * 0.9;
     
-    // --- Геометрия ---
+    // --- Геометрія ---
     let D_arm = Math.pow(P2 / (n / 1000), 0.3) * 2.5 * 10;
     D_arm = Math.round(D_arm / 5) * 5;
     let L_arm = D_arm * 0.8;
@@ -729,14 +729,14 @@ function calculateDCPro() {
     N = Math.round(N / 10) * 10;
     const w_sec = Math.round(N / 2 / Z);
     
-    // --- Геометрия паза ---
+    // --- Геометрія паза ---
     const b_p = Math.round((Math.PI * D_arm / Z) * 0.42 * 10) / 10;
     const h_p = Math.round(D_arm * 0.22 * 10) / 10;
     const S_p = b_p * h_p;
     const S_cu = (wire_s * (N / Z)) / 2;
     const k_fill = S_cu / S_p;
     
-    // --- Тепловой режим ---
+    // --- Тепловий режим ---
     const l_wire = N * (L_arm + D_arm) / 1000;
     const R_arm = rho_cu * l_wire / (wire_s * 2);
     const P_cu = I * I * R_arm;
@@ -752,7 +752,7 @@ function calculateDCPro() {
     const dt = q_flux / alpha;
     const t_actual = 40 + dt;
     
-    // --- Пусковые ---
+    // --- Пускові ---
     const R_start = R_arm * 0.8;
     const I_start = U / R_start;
     const M_start = torque * (I_start / I) * 0.8;
@@ -767,7 +767,7 @@ function calculateDCPro() {
     const v_air = cooling.v_air;
     const P_fan = 0.5 * 1.2 * Q_air * (v_air * v_air) / 0.6;
     
-    // --- Вывод ---
+    // --- Вивід ---
     document.getElementById('res_dc_p1').innerText = P1.toFixed(1) + ' Вт';
     document.getElementById('res_dc_i').innerText = I.toFixed(2) + ' А';
     document.getElementById('res_dc_torque').innerText = torque.toFixed(2) + ' Н·м';
@@ -803,7 +803,7 @@ function calculateDCPro() {
     const statusEl = document.getElementById('dc_thermal_status');
     statusEl.innerHTML = `<div class="${status.status}">Статус: ${status.label} (запас ${Math.round(status.margin)}°C)</div>`;
     
-    document.getElementById('res_dc_airflow').innerText = Q_air_m3h.toFixed(1) + ' м³/ч';
+    document.getElementById('res_dc_airflow').innerText = Q_air_m3h.toFixed(1) + ' м³/год';
     document.getElementById('res_dc_fan_d').innerText = (D_fan > 0 && D_fan < 500) ? D_fan.toFixed(0) + ' мм' : '—';
     document.getElementById('res_dc_air_v').innerText = v_air.toFixed(1) + ' м/с';
     document.getElementById('res_dc_fan_p').innerText = (P_fan > 0 && P_fan < 100) ? P_fan.toFixed(2) + ' Вт' : '—';
@@ -815,7 +815,7 @@ function calculateDCPro() {
 }
 
 // ============================================================
-// 4. АД - РАСЧЁТ
+// 4. АД - РОЗРАХУНОК
 // ============================================================
 function calculateACPro() {
     const P2 = 500;
@@ -830,7 +830,7 @@ function calculateACPro() {
     const cooling = getCoolingData('ac');
     const steel = getSteelData('ac');
     
-    // --- Электромагнитные ---
+    // --- Електромагнітні ---
     const sync_n = (50 * 60) / (poles / 2);
     const n = sync_n * (1 - slip);
     const P1 = P2 / eff;
@@ -838,7 +838,7 @@ function calculateACPro() {
     const I = S1 / (Math.sqrt(3) * U);
     const torque = P2 / (2 * Math.PI * n / 60);
     
-    // --- Геометрия ---
+    // --- Геометрія ---
     let D1 = Math.pow(P2 / (n / 1000), 0.33) * 8 * 10;
     D1 = Math.round(D1 / 5) * 5;
     let L1 = D1 * 0.7;
@@ -849,7 +849,7 @@ function calculateACPro() {
     const u_p = Math.round((A_desired * Math.PI * D1 / 10) / (I * 3));
     const y = Math.round(Z1 / poles);
     
-    // --- Геометрия паза ---
+    // --- Геометрія паза ---
     const b_p = Math.round((Math.PI * D1 / Z1) * 0.5 * 10) / 10;
     const h_p = Math.round(D1 * 0.18 * 10) / 10;
     const S_p = b_p * h_p;
@@ -857,7 +857,7 @@ function calculateACPro() {
     const S_cu = wire_s * u_p * 2;
     const k_fill = S_cu / S_p;
     
-    // --- Тепловой режим ---
+    // --- Тепловий режим ---
     const l_avg = L1 + D1 * 0.5;
     const R_ph = rho_cu * (l_avg / 1000) * u_p * (Z1 / 3) / wire_s;
     const P_cu = 3 * I * I * R_ph;
@@ -874,7 +874,7 @@ function calculateACPro() {
     const dt = q_flux / alpha;
     const t_actual = 40 + dt;
     
-    // --- Пусковые ---
+    // --- Пускові ---
     const k_start = 5 + (6 - poles/2) * 0.5;
     const I_start = I * k_start;
     const M_start = torque * (1.5 + 0.5 * (6 - poles/2));
@@ -889,9 +889,9 @@ function calculateACPro() {
     const v_air = cooling.v_air;
     const P_fan = 0.5 * 1.2 * Q_air * (v_air * v_air) / 0.6;
     
-    // --- Вывод ---
-    document.getElementById('res_ac_sync_n').innerText = sync_n + ' об/мин';
-    document.getElementById('res_ac_n').innerText = n.toFixed(0) + ' об/мин';
+    // --- Вивід ---
+    document.getElementById('res_ac_sync_n').innerText = sync_n + ' об/хв';
+    document.getElementById('res_ac_n').innerText = n.toFixed(0) + ' об/хв';
     document.getElementById('res_ac_p1').innerText = P1.toFixed(1) + ' Вт';
     document.getElementById('res_ac_i').innerText = I.toFixed(2) + ' А';
     document.getElementById('res_ac_torque').innerText = torque.toFixed(2) + ' Н·м';
@@ -925,7 +925,7 @@ function calculateACPro() {
     const statusEl = document.getElementById('ac_thermal_status');
     statusEl.innerHTML = `<div class="${status.status}">Статус: ${status.label} (запас ${Math.round(status.margin)}°C)</div>`;
     
-    document.getElementById('res_ac_airflow').innerText = Q_air_m3h.toFixed(1) + ' м³/ч';
+    document.getElementById('res_ac_airflow').innerText = Q_air_m3h.toFixed(1) + ' м³/год';
     document.getElementById('res_ac_fan_d').innerText = (D_fan > 0 && D_fan < 500) ? D_fan.toFixed(0) + ' мм' : '—';
     document.getElementById('res_ac_air_v').innerText = v_air.toFixed(1) + ' м/с';
     document.getElementById('res_ac_fan_p').innerText = (P_fan > 0 && P_fan < 100) ? P_fan.toFixed(2) + ' Вт' : '—';
@@ -938,9 +938,9 @@ function calculateACPro() {
 }
 
 // ============================================================
-// 5. ИНИЦИАЛИЗАЦИЯ ИНТЕРФЕЙСА
+// 5. ІНІЦІАЛІЗАЦІЯ ІНТЕРФЕЙСУ
 // ============================================================
-// Селекторы класса изоляции
+// Селектори класу ізоляції
 document.querySelectorAll('#dcInsulation button').forEach(btn => {
     btn.addEventListener('click', function() {
         document.querySelectorAll('#dcInsulation button').forEach(b => b.classList.remove('active'));
@@ -959,9 +959,8 @@ document.querySelectorAll('#acInsulation button').forEach(btn => {
     });
 });
 
-// Автоматический расчёт при загрузке (показывает пример)
+// Автоматичний розрахунок при завантаженні (показує приклад)
 window.onload = function() {
-    // Показываем пример расчёта при загрузке
     calculateDCPro();
     calculateACPro();
 };
