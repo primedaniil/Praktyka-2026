@@ -147,100 +147,100 @@
 <body>
 
 <div class="container">
-    <h1>Инженерный калькулятор расчета электродвигателей (500 Вт)</h1>
+    <h1>Інженерний калькулятор розрахунку електродвигунів (500 Вт)</h1>
     
     <div class="grid">
-        <!-- РАСЧЕТ ДВИГАТЕЛЯ ПОСТОЯННОГО ТОКА -->
+        <!-- РОЗРАХУНОК ДВИГУНА ПОСТІЙНОГО СТРУМУ -->
         <div class="card">
-            <div class="card-title dc-title">🔌 Двигатель постоянного тока (ДПТ)</div>
+            <div class="card-title dc-title">🔌 Двигун постійного струму (ДПТ)</div>
             
             <div class="input-group">
-                <label>Полезная мощность (P₂), Ватт</label>
+                <label>Корисна потужність (P₂), Ватт</label>
                 <input type="number" value="500" class="readonly-input" readonly>
             </div>
             
             <div class="input-group">
-                <label>Номинальное напряжение питания (U), В</label>
+                <label>Номінальна напруга живлення (U), В</label>
                 <input type="number" id="dc_voltage" value="24" min="12" max="400">
             </div>
             
             <div class="input-group">
-                <label>Частота вращения (n), об/мин</label>
+                <label>Частота обертання (n), об/мин</label>
                 <input type="number" id="dc_speed" value="3000" min="500" max="10000">
             </div>
             
             <div class="input-group">
-                <label>Предполагаемый КПД (η), %</label>
+                <label>Передбачуваний ККД (η), %</label>
                 <input type="number" id="dc_eff" value="82" min="50" max="98">
             </div>
             
             <div class="input-group">
-                <label>Плотность тока в обмотке (J), А/мм²</label>
+                <label>Щільність струму в обмотці (J), А/мм²</label>
                 <input type="number" id="dc_j" value="5" step="0.1" min="2" max="10">
             </div>
 
             <div class="input-group">
-                <label>Число пазов якоря (Z)</label>
+                <label>Число пазів якоря (Z)</label>
                 <input type="number" id="dc_z" value="24" min="8" max="60">
             </div>
             
-            <button class="btn-dc" onclick="calculateDC()">Рассчитать ДПТ</button>
+            <button class="btn-dc" onclick="calculateDC()">Розрахувати ДПТ</button>
             
             <div class="results" id="dc_results" style="display:none;">
-                <h4>⚡ Электромагнитный расчёт:</h4>
-                <div class="result-row"><span>Потребляемая мощность (P₁):</span><span class="result-val" id="res_dc_p1">-</span></div>
-                <div class="result-row"><span>Номинальный ток нагрузки (I_ном):</span><span class="result-val" id="res_dc_i">-</span></div>
-                <div class="result-row"><span>Крутящий момент (M_ном):</span><span class="result-val" id="res_dc_torque">-</span></div>
-                <div class="result-row"><span>Диаметр провода по меди (d):</span><span class="result-val" id="res_dc_wire_d">-</span></div>
+                <h4>⚡ Електромагнітний розрахунок:</h4>
+                <div class="result-row"><span>Споживана потужність (P₁):</span><span class="result-val" id="res_dc_p1">-</span></div>
+                <div class="result-row"><span>Номінальний струм навантаження (I_ном):</span><span class="result-val" id="res_dc_i">-</span></div>
+                <div class="result-row"><span>Крутний момент (M_ном):</span><span class="result-val" id="res_dc_torque">-</span></div>
+                <div class="result-row"><span>Діаметр дроту з міді (d):</span><span class="result-val" id="res_dc_wire_d">-</span></div>
                 <div class="result-row"><span>ЭДС якоря (E):</span><span class="result-val" id="res_dc_eds">-</span></div>
                 
                 <div class="sub-section">
-                    <h5>🔧 Геометрия якоря и обмотки:</h5>
-                    <div class="result-row"><span>Диаметр якоря (D_я):</span><span class="result-val" id="res_dc_d_arm">-</span></div>
-                    <div class="result-row"><span>Длина якоря (L_я):</span><span class="result-val" id="res_dc_l_arm">-</span></div>
-                    <div class="result-row"><span>Число активных проводников (N):</span><span class="result-val" id="res_dc_N">-</span></div>
-                    <div class="result-row"><span>Число витков в секции (w_сек):</span><span class="result-val" id="res_dc_w_sec">-</span></div>
+                    <h5>🔧 Геометрія якоря та обмотки:</h5> 
+                    <div class="result-row"><span>Діаметр якоря (D_я):</span><span class="result-val" id="res_dc_d_arm">-</span></div> 
+                    <div class="result-row"><span>Довжина якоря (L_я):</span><span class="result-val" id="res_dc_l_arm">-</span></div> 
+                    <div class="result-row"><span>Кількість активних провідників (N):</span><span class="result-val" id="res_dc_N">-</span></div> 
+                    <div class="result-row"><span>Кількість витків у секції (w_сек):</span><span class="result-val" id="res_dc_w_sec">-</span></div>
                 </div>
 
                 <div class="sub-section">
-                    <h5>📐 Геометрия паза якоря:</h5>
-                    <div class="result-row"><span>Ширина паза (b_п):</span><span class="result-val" id="res_dc_bp">-</span></div>
-                    <div class="result-row"><span>Высота паза (h_п):</span><span class="result-val" id="res_dc_hp">-</span></div>
-                    <div class="result-row"><span>Площадь паза (S_п):</span><span class="result-val" id="res_dc_sp">-</span></div>
-                    <div class="result-row"><span>Площадь меди в пазу (S_м):</span><span class="result-val" id="res_dc_scu">-</span></div>
-                    <div class="result-row"><span>Коэф. заполнения паза (k_зап):</span><span class="result-val" id="res_dc_kfill">-</span></div>
+                    <h5>📐 Геометрія паза якоря:</h5> 
+                    <div class="result-row"><span>Ширина паза (b_п):</span><span class="result-val" id="res_dc_bp">-</span></div> 
+                    <div class="result-row"><span>Висота паза (h_п):</span><span class="result-val" id="res_dc_hp">-</span></div> 
+                    <div class="result-row"><span>Площа паза (S_п):</span><span class="result-val" id="res_dc_sp">-</span></div> 
+                    <div class="result-row"><span>Площа міді в пазу (S_м):</span><span class="result-val" id="res_dc_scu">-</span></div> 
+                    <div class="result-row"><span>Коеф. заповнення паза (k_зап):</span><span class="result-val" id="res_dc_kfill">-</span></div>
                 </div>
 
                 <div class="sub-section">
-                    <h5>🌡️ Тепловой режим:</h5>
-                    <div class="result-row"><span>Потери в меди якоря (P_м):</span><span class="result-val" id="res_dc_pcu">-</span></div>
-                    <div class="result-row"><span>Поверхность охлаждения якоря (S_охл):</span><span class="result-val" id="res_dc_scool">-</span></div>
-                    <div class="result-row"><span>Тепловой поток с поверхности (q):</span><span class="result-val" id="res_dc_q">-</span></div>
-                    <div class="result-row"><span>Ориентировочный перегрев (Δt):</span><span class="result-val" id="res_dc_dt">-</span></div>
-                    <div class="warning">⚠️ Перегрев до 60-80°C допустим для класса F</div>
+                    <h5>🌡️ Тепловий режим:</h5> 
+                    <div class="result-row"><span>Втрати в міді якоря (P_м):</span><span class="result-val" id="res_dc_pcu">-</span></div> 
+                    <div class="result-row"><span>Поверхня охолодження якоря (S_охл):</span><span class="result-val" id="res_dc_scool">-</span></div> 
+                    <div class="result-row"><span>Тепловий потік з поверхні (q):</span><span class="result-val" id="res_dc_q">-</span></div> 
+                    <div class="result-row"><span>Орієнтовний перегрів (Δt):</span><span class="result-val" id="res_dc_dt">-</span></div> 
+                    <div class="warning">⚠️ Перегрів до 60-80°C допустимо для класу F</div>
                 </div>
             </div>
         </div>
         
-        <!-- РАСЧЕТ ДВИГАТЕЛЯ ПЕРЕМЕННОГО ТОКА -->
+        <!-- РОЗРАХУНОК ДВИГУНА ЗМІННОГО СТРУМУ -->
         <div class="card">
-            <div class="card-title ac-title">🌀 Асинхронный двигатель (АД)</div>
+            <div class="card-title ac-title">🌀 Асинхронний двигун (АД)</div>
             
             <div class="input-group">
-                <label>Полезная мощность (P₂), Ватт</label>
+                <label>Корисна потужність (P₂), Ватт</label>
                 <input type="number" value="500" class="readonly-input" readonly>
             </div>
             
             <div class="input-group">
-                <label>Линейное напряжение сети (U), В</label>
+                <label>Лінійна напруга мережі (U), В</label>
                 <select id="ac_voltage">
-                    <option value="220" selected>220 В (1 фаза / 3 фазы треугольник)</option>
-                    <option value="380">380 В (3 фазы звезда)</option>
+                    <option value="220" selected>220 В (1 фаза / 3 фазы трикутник)</option>
+                    <option value="380">380 В (3 фазы зірка)</option>
                 </select>
             </div>
             
             <div class="input-group">
-                <label>Число полюсов статора (2p)</label>
+                <label>Число полюсів статора (2p)</label>
                 <select id="ac_poles">
                     <option value="2">2 (3000 об/мин)</option>
                     <option value="4" selected>4 (1500 об/мин)</option>
@@ -249,59 +249,58 @@
             </div>
             
             <div class="input-group">
-                <label>Коэффициент мощности (cos φ)</label>
+                <label>Коефіцієнт потужності (cos φ)</label>
                 <input type="number" id="ac_cos" value="0.78" step="0.01" min="0.5" max="0.99">
             </div>
             
             <div class="input-group">
-                <label>Предполагаемый КПД (η), %</label>
+                <label>Передбачуваний ККД (η), %</label>
                 <input type="number" id="ac_eff" value="75" min="50" max="98">
             </div>
             
             <div class="input-group">
-                <label>Номинальное скольжение (s), %</label>
+                <label>Номінальне ковзання (s), %</label>
                 <input type="number" id="ac_slip" value="6" step="0.1" min="1" max="15">
             </div>
 
             <div class="input-group">
-                <label>Число пазов статора (Z₁)</label>
+                <label>Число пазів статора (Z₁)</label>
                 <input type="number" id="ac_z1" value="24" min="12" max="72">
             </div>
             
-            <button class="btn-ac" onclick="calculateAC()">Рассчитать АД</button>
+            <button class="btn-ac" onclick="calculateAC()">Розрахувати АД</button>
             
             <div class="results" id="ac_results" style="display:none;">
-                <h4>⚡ Электромагнитный расчёт:</h4>
-                <div class="result-row"><span>Синхронная частота:</span><span class="result-val" id="res_ac_sync_n">-</span></div>
-                <div class="result-row"><span>Номинальная частота (n):</span><span class="result-val" id="res_ac_n">-</span></div>
-                <div class="result-row"><span>Активная мощность (P₁):</span><span class="result-val" id="res_ac_p1">-</span></div>
-                <div class="result-row"><span>Линейный ток (I_лин):</span><span class="result-val" id="res_ac_i">-</span></div>
-                <div class="result-row"><span>Крутящий момент (M_ном):</span><span class="result-val" id="res_ac_torque">-</span></div>
-                
+                    <h4>⚡ Електромагнітний розрахунок:</h4> 
+                    <div class="result-row"><span>Синхронна частота:</span><span class="result-val" id="res_ac_sync_n">-</span></div> 
+                    <div class="result-row"><span>Номінальна частота (n):</span><span class="result-val" id="res_ac_n">-</span></div> 
+                    <div class="result-row"><span>Активна потужність (P₁):</span><span class="result-val" id="res_ac_p1">-</span></div> 
+                    <div class="result-row"><span>Лінійний струм (I_лін):</span><span class="result-val" id="res_ac_i">-</span></div> 
+                    <div class="result-row"><span>Міткий момент (M_ном):</span><span class="result-val" id="res_ac_torque">-</span></div>                
                 <div class="sub-section">
-                    <h5>🔧 Геометрия статора и обмотки:</h5>
-                    <div class="result-row"><span>Диаметр расточки (D₁):</span><span class="result-val" id="res_ac_d_stator">-</span></div>
-                    <div class="result-row"><span>Длина пакета (L₁):</span><span class="result-val" id="res_ac_l_stator">-</span></div>
-                    <div class="result-row"><span>Проводников в пазу (u_п):</span><span class="result-val" id="res_ac_u_p">-</span></div>
-                    <div class="result-row"><span>Шаг обмотки (y):</span><span class="result-val" id="res_ac_y">-</span></div>
+                    <h5>🔧 Геометрія статора та обмотки:</h5> 
+                    <div class="result-row"><span>Діаметр розточування (D₁):</span><span class="result-val" id="res_ac_d_stator">-</span></div> 
+                    <div class="result-row"><span>Довжина пакета (L₁):</span><span class="result-val" id="res_ac_l_stator">-</span></div> 
+                    <div class="result-row"><span>Провідників у пазу (u_п):</span><span class="result-val" id="res_ac_u_p">-</span></div> 
+                    <div class="result-row"><span>Крок обмотки (y):</span><span class="result-val" id="res_ac_y">-</span></div>
                 </div>
 
                 <div class="sub-section">
-                    <h5>📐 Геометрия паза статора:</h5>
-                    <div class="result-row"><span>Ширина паза (b_п):</span><span class="result-val" id="res_ac_bp">-</span></div>
-                    <div class="result-row"><span>Высота паза (h_п):</span><span class="result-val" id="res_ac_hp">-</span></div>
-                    <div class="result-row"><span>Площадь паза (S_п):</span><span class="result-val" id="res_ac_sp">-</span></div>
-                    <div class="result-row"><span>Площадь меди в пазу (S_м):</span><span class="result-val" id="res_ac_scu">-</span></div>
-                    <div class="result-row"><span>Коэф. заполнения паза:</span><span class="result-val" id="res_ac_kfill">-</span></div>
+                    <h5>📐 Геометрія паза статора:</h5> 
+                    <div class="result-row"><span>Ширина паза (b_п):</span><span class="result-val" id="res_ac_bp">-</span></div> 
+                    <div class="result-row"><span>Висота паза (h_п):</span><span class="result-val" id="res_ac_hp">-</span></div> 
+                    <div class="result-row"><span>Площа паза (S_п):</span><span class="result-val" id="res_ac_sp">-</span></div> 
+                    <div class="result-row"><span>Площа міді в пазу (S_м):</span><span class="result-val" id="res_ac_scu">-</span></div> 
+                    <div class="result-row"><span>Коеф. заповнення паза:</span><span class="result-val" id="res_ac_kfill">-</span></div>
                 </div>
 
                 <div class="sub-section">
-                    <h5>🌡️ Тепловой режим статора:</h5>
-                    <div class="result-row"><span>Потери в меди статора (P_м):</span><span class="result-val" id="res_ac_pcu">-</span></div>
-                    <div class="result-row"><span>Поверхность охлаждения (S_охл):</span><span class="result-val" id="res_ac_scool">-</span></div>
-                    <div class="result-row"><span>Тепловой поток (q):</span><span class="result-val" id="res_ac_q">-</span></div>
-                    <div class="result-row"><span>Ориентировочный перегрев (Δt):</span><span class="result-val" id="res_ac_dt">-</span></div>
-                    <div class="warning">⚠️ Перегрев до 60-80°C допустим для класса F</div>
+                    <h5>🌡️ Тепловий режим статора:</h5> 
+                    <div class="result-row"><span>Втрати в міді статора (P_м):</span><span class="result-val" id="res_ac_pcu">-</span></div> 
+                    <div class="result-row"><span>Поверхня охолодження (S_охл):</span><span class="result-val" id="res_ac_scool">-</span></div> 
+                    <div class="result-row"><span>Тепловий потік (q):</span><span class="result-val" id="res_ac_q">-</span></div> 
+                    <div class="result-row"><span>Орієнтовний перегрів (Δt):</span><span class="result-val" id="res_ac_dt">-</span></div> 
+                    <div class="warning">⚠️ Перегрів до 60-80°C допустимо для класу F</div>
                 </div>
             </div>
         </div>
@@ -318,7 +317,7 @@
         const J = parseFloat(document.getElementById('dc_j').value);
         const Z = parseInt(document.getElementById('dc_z').value);
         
-        // Электромагнитные параметры
+        // Електромагнітні параметри
         const P1 = P2 / eff;
         const I = P1 / U;
         const omega = 2 * Math.PI * n / 60;
@@ -333,7 +332,7 @@
         let L_arm = D_arm * 0.8;
         L_arm = Math.round(L_arm / 5) * 5;
         
-        // Число проводников
+        // Число провідників
         const Bd = 0.55;
         const p = 1;
         const a = 1;
