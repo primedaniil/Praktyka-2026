@@ -185,29 +185,29 @@
 </head>
 <body>
 <div class="container">
-    <h1>🌡️ Тепловые карты электродвигателей</h1>
+    <h1>🌡️ Теплові карти електродвигунів</h1>
     
     <div class="main-grid">
         <!-- ДПТ -->
         <div class="card">
-            <div class="card-title dc-title">🔌 Двигатель постоянного тока (ДПТ)</div>
+            <div class="card-title dc-title">🔌 Двигун постійного струму (ДПТ)</div>
             <div class="canvas-wrapper">
                 <canvas id="canvasDC" width="600" height="500"></canvas>
             </div>
             
             <div class="controls" id="dcControls">
                 <div class="control-group">
-                    <label>Обмотка якоря (пазовая часть)</label>
+                    <label>Обмотка якоря (пазова частина)</label>
                     <input type="range" id="dc_temp1" min="40" max="180" value="85">
                     <div class="value-display" id="dc_val1">85°C</div>
                 </div>
                 <div class="control-group">
-                    <label>Коллектор (рабочая поверхность)</label>
+                    <label>Колектор (робоча поверхня)</label>
                     <input type="range" id="dc_temp2" min="40" max="120" value="72">
                     <div class="value-display" id="dc_val2">72°C</div>
                 </div>
                 <div class="control-group">
-                    <label>Щётки (контактная зона)</label>
+                    <label>Щітки (контактна зона)</label>
                     <input type="range" id="dc_temp3" min="40" max="110" value="68">
                     <div class="value-display" id="dc_val3">68°C</div>
                 </div>
@@ -229,10 +229,10 @@
             </div>
             
             <div class="info-panel" id="dcInfo">
-                <div class="info-item"><span class="info-label">Максимальная температура:</span><span class="info-value" id="dc_max">85°C</span></div>
-                <div class="info-item"><span class="info-label">Класс изоляции:</span><span class="info-value">F (155°C)</span></div>
+                <div class="info-item"><span class="info-label">Максимальна температура:</span><span class="info-value" id="dc_max">85°C</span></div>
+                <div class="info-item"><span class="info-label">Клас ізоляції:</span><span class="info-value">F (155°C)</span></div>
                 <div class="info-item"><span class="info-label">Статус:</span><span class="info-value" id="dc_status"><span class="status-badge status-safe">✅ Норма</span></span></div>
-                <div class="info-item"><span class="info-label">Запас до критической:</span><span class="info-value" id="dc_margin">70°C</span></div>
+                <div class="info-item"><span class="info-label">Запас до критичної:</span><span class="info-value" id="dc_margin">70°C</span></div>
             </div>
             
             <div class="legend">
@@ -245,26 +245,26 @@
             </div>
         </div>
         
-        <!-- АД - ИСПРАВЛЕННЫЙ -->
+        <!-- АД --->
         <div class="card">
-            <div class="card-title ac-title">🌀 Асинхронный двигатель (АД)</div>
+            <div class="card-title ac-title">🌀 Асинхронний двигун (АД)</div>
             <div class="canvas-wrapper">
                 <canvas id="canvasAC" width="600" height="500"></canvas>
             </div>
             
             <div class="controls" id="acControls">
                 <div class="control-group">
-                    <label>Обмотка статора (лобовая часть)</label>
+                    <label>Обмотка статора (лобова частина)</label>
                     <input type="range" id="ac_temp1" min="40" max="180" value="82">
                     <div class="value-display" id="ac_val1">82°C</div>
                 </div>
                 <div class="control-group">
-                    <label>Обмотка статора (пазовая часть)</label>
+                    <label>Обмотка статора (пазова частина)</label>
                     <input type="range" id="ac_temp2" min="40" max="180" value="88">
                     <div class="value-display" id="ac_val2">88°C</div>
                 </div>
                 <div class="control-group">
-                    <label>Сердечник статора (ярмо/зубцы)</label>
+                    <label>Сердечник статора (ярмо/зубці)</label>
                     <input type="range" id="ac_temp3" min="40" max="155" value="75">
                     <div class="value-display" id="ac_val3">75°C</div>
                 </div>
@@ -286,10 +286,10 @@
             </div>
             
             <div class="info-panel" id="acInfo">
-                <div class="info-item"><span class="info-label">Максимальная температура:</span><span class="info-value" id="ac_max">95°C</span></div>
-                <div class="info-item"><span class="info-label">Класс изоляции:</span><span class="info-value">F (155°C)</span></div>
+                <div class="info-item"><span class="info-label">Максимальна температура:</span><span class="info-value" id="ac_max">95°C</span></div>
+                <div class="info-item"><span class="info-label">Клас ізоляції:</span><span class="info-value">F (155°C)</span></div>
                 <div class="info-item"><span class="info-label">Статус:</span><span class="info-value" id="ac_status"><span class="status-badge status-safe">✅ Норма</span></span></div>
-                <div class="info-item"><span class="info-label">Запас до критической:</span><span class="info-value" id="ac_margin">60°C</span></div>
+                <div class="info-item"><span class="info-label">Запас до критичної:</span><span class="info-value" id="ac_margin">60°C</span></div>
             </div>
             
             <div class="legend">
@@ -306,7 +306,7 @@
 
 <script>
 // ============================================================
-// 1. УТИЛИТЫ ДЛЯ ЦВЕТОВОЙ КАРТЫ
+// 1. УТИЛІТИ ДЛЯ КОЛІРНОЇ КАРТИ
 // ============================================================
 function temperatureToColor(temp, minTemp = 40, maxTemp = 160) {
     let t = (temp - minTemp) / (maxTemp - minTemp);
@@ -340,12 +340,12 @@ function temperatureToColor(temp, minTemp = 40, maxTemp = 160) {
 function getStatusInfo(temp, maxAllowed = 155) {
     const margin = maxAllowed - temp;
     if (margin > 30) return { status: 'safe', label: '✅ Норма', class: 'status-safe', margin: margin };
-    if (margin > 10) return { status: 'warning', label: '⚠️ Внимание', class: 'status-warning', margin: margin };
+    if (margin > 10) return { status: 'warning', label: '⚠️ Увага', class: 'status-warning', margin: margin };
     return { status: 'danger', label: '🔴 Критично!', class: 'status-danger', margin: margin };
 }
 
 // ============================================================
-// 2. ОТРИСОВКА ТЕПЛОВЫХ КАРТ
+// 2. ОТРИСУВАННЯ ТЕПЛОВИХ КАРТ
 // ============================================================
 function drawThermalMap(canvasId, temps, labels, criticalTemp = 155, isAC = false) {
     const canvas = document.getElementById(canvasId);
@@ -363,10 +363,10 @@ function drawThermalMap(canvasId, temps, labels, criticalTemp = 155, isAC = fals
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
     
-    // ---- Координаты точек (разные для ДПТ и АД) ----
+    // ---- Координати точок (різні для ДПТ та АТ) ----
     let points;
     if (isAC) {
-        // Точки для АД (без коллектора!)
+        // Крапки для АТ (без колектора!)
         points = [
             { x: 0.25, y: 0.20, label: 'Обмотка статора\n(лобова)' },
             { x: 0.55, y: 0.22, label: 'Обмотка статора\n(пазова)' },
@@ -387,7 +387,7 @@ function drawThermalMap(canvasId, temps, labels, criticalTemp = 155, isAC = fals
         ];
     }
     
-    // ---- Тепловые пятна ----
+    // ---- Теплові плями ----
     const tempMin = 30;
     const tempMax = 200;
     
@@ -410,7 +410,7 @@ function drawThermalMap(canvasId, temps, labels, criticalTemp = 155, isAC = fals
         ctx.fill();
     }
     
-    // ---- Линии связей ----
+    // ---- Лінії зв'язків ----
     ctx.strokeStyle = 'rgba(255,255,255,0.08)';
     ctx.lineWidth = 1;
     ctx.setLineDash([4, 6]);
@@ -424,7 +424,7 @@ function drawThermalMap(canvasId, temps, labels, criticalTemp = 155, isAC = fals
     }
     ctx.setLineDash([]);
     
-    // ---- Изотермические контуры ----
+    // ---- Ізотермічні контури ----
     for (let i = 0; i < Math.min(points.length, temps.length); i++) {
         const pt = points[i];
         const cx = pt.x * W;
@@ -441,7 +441,7 @@ function drawThermalMap(canvasId, temps, labels, criticalTemp = 155, isAC = fals
         }
     }
     
-    // ---- Маркеры точек ----
+    // ---- Маркеры точок ----
     for (let i = 0; i < Math.min(points.length, temps.length); i++) {
         const pt = points[i];
         const temp = temps[i];
@@ -450,7 +450,7 @@ function drawThermalMap(canvasId, temps, labels, criticalTemp = 155, isAC = fals
         const color = temperatureToColor(temp, tempMin, tempMax);
         const radius = 18;
         
-        // Свечение
+        // Свічення
         const glow = ctx.createRadialGradient(cx, cy, 2, cx, cy, radius * 2);
         glow.addColorStop(0, 'rgba(255,255,255,0.3)');
         glow.addColorStop(1, 'rgba(255,255,255,0)');
@@ -459,7 +459,7 @@ function drawThermalMap(canvasId, temps, labels, criticalTemp = 155, isAC = fals
         ctx.fillStyle = glow;
         ctx.fill();
         
-        // Круг
+        // Коло
         ctx.beginPath();
         ctx.arc(cx, cy, radius, 0, Math.PI * 2);
         ctx.fillStyle = color;
@@ -475,7 +475,7 @@ function drawThermalMap(canvasId, temps, labels, criticalTemp = 155, isAC = fals
         ctx.textBaseline = 'middle';
         ctx.fillText(Math.round(temp) + '°', cx, cy - 2);
         
-        // Подпись
+        // Підпис
         ctx.fillStyle = 'rgba(255,255,255,0.85)';
         ctx.font = '9px sans-serif';
         ctx.textAlign = 'center';
@@ -488,7 +488,7 @@ function drawThermalMap(canvasId, temps, labels, criticalTemp = 155, isAC = fals
         }
     }
     
-    // ---- Легенда на холсте ----
+    // ---- Легенда на полотні ----
     ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
     ctx.roundRect(W - 160, 16, 140, 30, 8);
     ctx.fill();
@@ -529,7 +529,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
 }
 
 // ============================================================
-// 3. ОБНОВЛЕНИЕ ДАННЫХ
+// 3. ОБНОВЛЕННЯ ДАНИХ
 // ============================================================
 function updateDC() {
     const temps = [
