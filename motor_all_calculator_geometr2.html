@@ -956,11 +956,11 @@ function calculateACPro() {
     const t_start = (2 * Math.PI * n / 60) * (0.15) / (M_start - torque);
     
     // --- Вентилятор ---
-    const Q_air = P_loss / (1.2 * 1000 * 5);
-    const Q_air_m3h = Q_air * 3600;
-    const D_fan = Math.sqrt(Q_air / (Math.PI * 0.5 * cooling.v_air)) * 1000;
-    const v_air = cooling.v_air;
-    const P_fan = 0.5 * 1.2 * Q_air * (v_air * v_air) / 0.6;
+//    const Q_air = P_loss / (1.2 * 1000 * 5);
+//    const Q_air_m3h = Q_air * 3600;
+//    const D_fan = Math.sqrt(Q_air / (Math.PI * 0.5 * cooling.v_air)) * 1000;
+//    const v_air = cooling.v_air;
+ //   const P_fan = 0.5 * 1.2 * Q_air * (v_air * v_air) / 0.6;
 
 	// --- Вентилятор ---
 const Q_air = P_loss / (1.2 * 1000 * 5);
