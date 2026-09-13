@@ -934,11 +934,24 @@ if (poles === 2) {
     L1 = 56;
 }
     
-    const q_slots = Z1 / (poles * 3);             // число пазів на полюс і фазу
-    const A_desired = 200;                        // бажана лінійна нагрузка
-    const u_p = Math.round((A_desired * Math.PI * D1 / 10) / (I * 3));
-    const y = Math.round(Z1 / poles);             // крок обмотки
-    
+ //   const q_slots = Z1 / (poles * 3);             // число пазів на полюс і фазу
+ //   const A_desired = 200;                        // бажана лінійна нагрузка
+ //   const u_p = Math.round((A_desired * Math.PI * D1 / 10) / (I * 3));
+ //   const y = Math.round(Z1 / poles);             // крок обмотки
+
+const q_slots = Z1 / (poles * 3);
+
+// Число провідників у пазу (для 500 Вт)
+let u_p;
+if (P2 <= 300) u_p = 45;
+else if (P2 <= 500) u_p = 65;
+else if (P2 <= 1000) u_p = 80;
+else if (P2 <= 2000) u_p = 100;
+else u_p = Math.round(65 * Math.pow(P2/500, 0.3));
+
+const y = Math.round(Z1 / poles);
+
+	
     // ============================================================
     // 3. ГЕОМЕТРІЯ ПАЗА
     // ============================================================
