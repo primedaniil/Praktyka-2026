@@ -934,20 +934,25 @@ function calculateACPro() {
     const l_avg = L1 + D1 * 0.5;
     const R_ph = rho_cu * (l_avg / 1000) * u_p * (Z1 / 3) / wire_s;
     const P_cu = 3 * I * I * R_ph;
-    
-    const steelMassAC = Math.PI * (D1/1000) * (L1/1000) * 7850 * 0.6;
-    const P_steel = steel.loss * steelMassAC * (50/50) * 1.5;
-    
-    const P_loss = P_cu + P_steel;
-	
     const D_ext = D1 * 1.25;
-    const S_cool = Math.PI * D_ext * L1*1.8 / 1e6;
+   const steelMassAC = Math.PI * (Math.pow(D_ext/2000, 2) - Math.pow(D1/2000, 2)) * (L1/1000) * 7850; 
+//    const steelMassAC = Math.PI * (D1/1000) * (L1/1000) * 7850 * 0.6;
+//    const P_steel = steel.loss * steelMassAC * (50/50) * 1.5;
+    // 4. Втрати в сталі
+	const P_steel = steel.loss * steelMassAC * 1.5;
+	
+    const P_loss = P_cu + P_steel;
+	// 6. Площа охолодження (з ребрами)
+	const k_rib = 1.8;
+	const S_cool = Math.PI * D_ext * L1 * k_rib / 1e6;
+	
+ //   const S_cool = Math.PI * D_ext * L1*1.8 / 1e6;
     const q_flux = P_loss / S_cool;
     const alpha = cooling.alpha;
 	    // Тепловий опір
-	const R_thermal = 1 / (cooling.alpha * S_cool) + 0.4;
- //   const dt = q_flux / alpha;
-	const dt = P_loss * R_thermal;
+//	const R_thermal = 1 / (cooling.alpha * S_cool) + 0.4;
+    const dt = q_flux / alpha;
+//	const dt = P_loss * R_thermal;
     const t_actual = 40 + dt;
     
     // --- Пускові ---
