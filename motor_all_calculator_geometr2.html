@@ -939,12 +939,15 @@ function calculateACPro() {
     const P_steel = steel.loss * steelMassAC * (50/50) * 1.5;
     
     const P_loss = P_cu + P_steel;
-    
-    const D_ext = D1 * 1.5;
-    const S_cool = Math.PI * D_ext * L1 / 1e6;
+	
+    const D_ext = D1 * 1.25;
+    const S_cool = Math.PI * D_ext * L1*1.8 / 1e6;
     const q_flux = P_loss / S_cool;
     const alpha = cooling.alpha;
-    const dt = q_flux / alpha;
+	    // Тепловий опір
+	const R_thermal = 1 / (cooling.alpha * S_cool) + 0.4;
+ //   const dt = q_flux / alpha;
+	const dt = P_loss * R_thermal;
     const t_actual = 40 + dt;
     
     // --- Пускові ---
