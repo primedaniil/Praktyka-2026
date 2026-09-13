@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модуль розрахунку лиття</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            color: #7c3aed;
+            margin-bottom: 6px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+        }
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: bold;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #7c3aed;
+            color: #1e293b;
+        }
+        .input-group { margin-bottom: 10px; }
+        label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+            color: #4b5563;
+        }
+        input, select {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: #fafbfc;
+        }
+        input:focus, select:focus {
+            outline: 2px solid #93c5fd;
+            background: #ffffff;
+        }
+        .readonly-input {
+            background: #f3f4f6;
+            cursor: not-allowed;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .btn-calc { background: #7c3aed; }
+        .btn-calc:hover { background: #6d28d9; }
+        .btn-back { background: #64748b; }
+        .btn-back:hover { background: #475569; }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            font-size: 0.85rem;
+        }
+        .result-row:last-child { border-bottom: none; }
+        .result-val {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .sub-section {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 2px solid #e5e7eb;
+        }
+        .sub-section h5 {
+            margin: 0 0 8px 0;
+            color: #475569;
+            font-size: 0.9rem;
+        }
+        .success {
+            color: #166534;
+            background: #dcfce7;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            border-left: 3px solid #22c55e;
+        }
+        .warning {
+            color: #b45309;
+            background: #fffbeb;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            border-left: 3px solid #f59e0b;
+        }
+        .danger {
+            color: #991b1b;
+            background: #fee2e2;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            border-left: 3px solid #ef4444;
+        }
+        .json-preview {
+            background: #0f172a;
+            color: #22c55e;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            max-height: 200px;
+            overflow: auto;
+            white-space: pre-wrap;
+        }
+        .info-box {
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #475569;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🏭 Модуль розрахунку для лиття</h1>
+    <p class="subtitle">Отримує дані з калькулятора електродвигунів</p>
+
+    <!-- Статус завантаження даних -->
+    <div class="card" id="statusCard">
+        <div class="card-title">📥 Статус даних</div>
+        <div id="dataStatus" class="info-box">Завантаження...</div>
+    </div>
+
+    <div class="grid">
+        <!-- Вхідні дані з калькулятора -->
+        <div class="card">
+            <div class="card-title">📊 Дані з калькулятора</div>
+
+            <div class="input-group">
+                <label>Тип двигуна</label>
+                <input type="text" id="in_type" class="readonly-input" readonly>
+            </div>
+
+            <div class="input-group">
+                <label>Потужність (P₂), Вт</label>
+                <input type="number" id="in_power" class="readonly-input" readonly>
+            </div>
+
+            <div class="input-group">
+                <label>Напруга (U), В</label>
+                <input type="number" id="in_voltage" class="readonly-input" readonly>
+            </div>
+
+            <div id="dcInputs" style="display:none;">
+                <div class="input-group">
+                    <label>Частота обертання (n), об/хв</label>
+                    <input type="number" id="in_speed" class="readonly-input" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Число пазів якоря (Z)</label>
+                    <input type="number" id="in_z" class="readonly-input" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Діаметр якоря (D_я), мм</label>
+                    <input type="number" id="in_D_arm" class="readonly-input" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Довжина якоря (L_я), мм</label>
+                    <input type="number" id="in_L_arm" class="readonly-input" readonly>
+                </div>
+            </div>
+
+            <div id="acInputs" style="display:none;">
+                <div class="input-group">
+                    <label>Число полюсів (2p)</label>
+                    <input type="number" id="in_poles" class="readonly-input" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Число пазів статора (Z₁)</label>
+                    <input type="number" id="in_z1" class="readonly-input" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Діаметр розточки (D₁), мм</label>
+                    <input type="number" id="in_D1" class="readonly-input" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Довжина пакета (L₁), мм</label>
+                    <input type="number" id="in_L1" class="readonly-input" readonly>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Пусковий струм (I_пуск), А</label>
+                <input type="number" id="in_i_start" class="readonly-input" readonly>
+            </div>
+
+            <div class="input-group">
+                <label>Сумарні втрати (P_сум), Вт</label>
+                <input type="number" id="in_p_loss" class="readonly-input" readonly>
+            </div>
+
+            <div class="input-group">
+                <label>Перегрів (Δt), °C</label>
+                <input type="number" id="in_dt" class="readonly-input" readonly>
+            </div>
+        </div>
+
+        <!-- Налаштування лиття -->
+        <div class="card">
+            <div class="card-title">⚙️ Параметри лиття</div>
+
+            <div class="input-group">
+                <label>Матеріал лиття</label>
+                <select id="cast_material" onchange="calculateCasting()">
+                    <option value="Al" data-shrink="1.012" data-j="4" data-temp="660" data-density="2.7">Алюміній АК12 (усадка 1.2%)</option>
+                    <option value="AlSi" data-shrink="1.010" data-j="4.5" data-temp="580" data-density="2.65">Алюміній-кремній (усадка 1.0%)</option>
+                    <option value="Cu" data-shrink="1.018" data-j="5" data-temp="1085" data-density="8.9">Мідь (усадка 1.8%)</option>
+                    <option value="Brass" data-shrink="1.014" data-j="4.5" data-temp="900" data-density="8.5">Латунь (усадка 1.4%)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Метод лиття</label>
+                <select id="cast_method" onchange="calculateCasting()">
+                    <option value="pressure">Лиття під тиском</option>
+                    <option value="gravity" selected>Лиття в кокіль</option>
+                    <option value="investment">Лиття за моделями, що виплавляються</option>
+                </select>
+            </div>
+
+            <button class="btn-calc" onclick="calculateCasting()">📊 Розрахувати лиття</button>
+            <button class="btn-back" onclick="window.close()">⬅️ Закрити модуль</button>
+
+            <div class="sub-section">
+                <h5>📋 JSON-дані з калькулятора</h5>
+                <div class="json-preview" id="jsonPreview">—</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Результати розрахунку -->
+    <div class="card" style="margin-top:20px;">
+        <div class="card-title">🏭 Результати розрахунку лиття</div>
+        <div id="results"></div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// 1. ЗАВАНТАЖЕННЯ ДАНИХ З КАЛЬКУЛЯТОРА
+// ============================================================
+window.onload = function() {
+    const jsonData = localStorage.getItem('casting_data');
+    const statusEl = document.getElementById('dataStatus');
+
+    if (!jsonData) {
+        statusEl.innerHTML = '❌ Дані не знайдено. Будь ласка, поверніться до калькулятора та натисніть «Перейти до модуля лиття».';
+        statusEl.className = 'danger';
+        return;
+    }
+
+    try {
+        const data = JSON.parse(jsonData);
+        statusEl.innerHTML = `✅ Дані успішно завантажено (${new Date(data.timestamp).toLocaleString('uk-UA')})`;
+        statusEl.className = 'success';
+
+        // Показуємо JSON
+        document.getElementById('jsonPreview').textContent = JSON.stringify(data, null, 2);
+
+        // Заповнюємо поля
+        document.getElementById('in_type').value = data.type === 'dc' ? 'ДПТ' : 'АД';
+        document.getElementById('in_power').value = data.power;
+        document.getElementById('in_voltage').value = data.voltage;
+
+        if (data.type === 'dc') {
+            document.getElementById('dcInputs').style.display = 'block';
+            document.getElementById('in_speed').value = data.speed;
+            document.getElementById('in_z').value = data.z;
+            document.getElementById('in_D_arm').value = data.calculated.D_arm;
+            document.getElementById('in_L_arm').value = data.calculated.L_arm;
+        } else {
+            document.getElementById('acInputs').style.display = 'block';
+            document.getElementById('in_poles').value = data.poles;
+            document.getElementById('in_z1').value = data.z1;
+            document.getElementById('in_D1').value = data.calculated.D1;
+            document.getElementById('in_L1').value = data.calculated.L1;
+        }
+
+        document.getElementById('in_i_start').value = data.calculated.I_start;
+        document.getElementById('in_p_loss').value = data.calculated.P_loss;
+        document.getElementById('in_dt').value = data.calculated.dt;
+
+        // Автоматичний розрахунок
+        calculateCasting();
+
+    } catch (e) {
+        statusEl.innerHTML = '❌ Помилка парсингу JSON: ' + e.message;
+        statusEl.className = 'danger';
+    }
+};
+
+// ============================================================
+// 2. РОЗРАХУНОК ЛИТТЯ
+// ============================================================
+function calculateCasting() {
+    const jsonData = localStorage.getItem('casting_data');
+    if (!jsonData) return;
+
+    const data = JSON.parse(jsonData);
+    const matSel = document.getElementById('cast_material');
+    const matData = matSel.options[matSel.selectedIndex].dataset;
+    const shrink = parseFloat(matData.shrink);
+    const J_cast = parseFloat(matData.j);
+    const T_melt = parseFloat(matData.temp);
+    const density = parseFloat(matData.density);
+
+    let results = '';
+
+    if (data.type === 'ac') {
+        // --- АД: клітка ротора ---
+        const D1 = data.calculated.D1;
+        const L1 = data.calculated.L1;
+        const I_start = data.calculated.I_start;
+        const Z1 = data.z1;
+
+        const Z2 = Math.round(Z1 * 0.8);
+        const D2 = D1 - 0.8;
+        const L_st = L1 + 16;
+        const S_st = I_start / (J_cast * Z2);
+        const S_ring = 0.7 * S_st * Z2 / Math.PI;
+        const S_sprue = 1.5 * S_st * Z2;
+        const d_sprue = Math.sqrt(4 * S_sprue / Math.PI);
+        const D_mold = D2 * shrink;
+
+        const V_rod = S_st * L_st * Z2;
+        const V_ring = S_ring * Math.PI * D2 * 2;
+        const V_total = (V_rod + V_ring) / 1000;
+        const mass = V_total * density / 1000;
+
+        results = `
+            <div class="result-row"><span>Число пазів ротора (Z₂):</span><span class="result-val">${Z2} шт</span></div>
+            <div class="result-row"><span>Діаметр ротора (D₂):</span><span class="result-val">${D2.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Довжина стержня (L_ст):</span><span class="result-val">${L_st.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Переріз стержня (S_ст):</span><span class="result-val">${S_st.toFixed(3)} мм²</span></div>
+            <div class="result-row"><span>Переріз кільця (S_кільця):</span><span class="result-val">${S_ring.toFixed(3)} мм²</span></div>
+            <div class="result-row"><span>Діаметр литника (d_лит):</span><span class="result-val">${d_sprue.toFixed(2)} мм</span></div>
+            <div class="result-row"><span>Розмір форми (з усадкою):</span><span class="result-val">${D_mold.toFixed(2)} мм</span></div>
+            <div class="result-row"><span>Температура плавлення:</span><span class="result-val">${T_melt} °C</span></div>
+            <div class="result-row"><span>Маса клітки (оцінка):</span><span class="result-val">${mass.toFixed(3)} кг</span></div>
+        `;
+    } else {
+        // --- ДПТ: корпус ---
+        const D_arm = data.calculated.D_arm;
+        const L_arm = data.calculated.L_arm;
+
+        const D_зовн = D_arm * 1.5;
+        const L_корп = L_arm + 20;
+        const t_wall = (D_зовн - D_arm) / 2;
+        const d_sprue = Math.max(3, t_wall * 0.3);
+        const D_mold = D_зовн * shrink;
+
+        const volume = Math.PI * (D_зовн/2000) * (L_корп/1000) * 0.02 * 1e6;
+        const mass = volume * density / 1000;
+
+        results = `
+            <div class="result-row"><span>Зовнішній діаметр (D_зовн):</span><span class="result-val">${D_зовн.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Довжина корпусу (L_корп):</span><span class="result-val">${L_корп.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Товщина стінки (t_ст):</span><span class="result-val">${t_wall.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Діаметр литника (d_лит):</span><span class="result-val">${d_sprue.toFixed(2)} мм</span></div>
+            <div class="result-row"><span>Розмір форми (з усадкою):</span><span class="result-val">${D_mold.toFixed(2)} мм</span></div>
+            <div class="result-row"><span>Температура плавлення:</span><span class="result-val">${T_melt} °C</span></div>
+            <div class="result-row"><span>Маса корпусу (оцінка):</span><span class="result-val">${mass.toFixed(3)} кг</span></div>
+        `;
+    }
+
+    // Статус
+    const tempDelta = T_melt - 40;
+    let statusClass, statusText;
+    if (tempDelta > 300) {
+        statusClass = 'success';
+        statusText = `✅ Лиття можливе (запас ${Math.round(tempDelta)}°C)`;
+    } else if (tempDelta > 200) {
+        statusClass = 'warning';
+        statusText = `⚠️ Перевірте тепловий режим (запас ${Math.round(tempDelta)}°C)`;
+    } else {
+        statusClass = 'danger';
+        statusText = `🔴 Критично! Потрібне охолодження`;
+    }
+
+    document.getElementById('results').innerHTML = results +
+        `<div class="${statusClass}">${statusText}</div>`;
+}
+</script>
+
+</body>
+</html>
