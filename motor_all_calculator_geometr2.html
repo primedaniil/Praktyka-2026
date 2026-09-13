@@ -961,6 +961,19 @@ function calculateACPro() {
     const D_fan = Math.sqrt(Q_air / (Math.PI * 0.5 * cooling.v_air)) * 1000;
     const v_air = cooling.v_air;
     const P_fan = 0.5 * 1.2 * Q_air * (v_air * v_air) / 0.6;
+
+	// --- Вентилятор ---
+const Q_air = P_loss / (1.2 * 1000 * 5);
+const Q_air_m3h = Q_air * 3600;
+const v_air = cooling.v_air !== undefined ? cooling.v_air : 8;
+const D_fan = v_air > 0 ? Math.sqrt(Q_air / (Math.PI * 0.5 * v_air)) * 1000 : 0;
+const P_fan = v_air > 0 ? 0.5 * 1.2 * Q_air * (v_air * v_air) / 0.6 : 0;
+
+// Вивід
+document.getElementById('res_ac_airflow').innerText = isFinite(Q_air_m3h) ? Q_air_m3h.toFixed(1) + ' м³/год' : '—';
+document.getElementById('res_ac_fan_d').innerText = (v_air > 0 && isFinite(D_fan) && D_fan > 0 && D_fan < 500) ? D_fan.toFixed(0) + ' мм' : (v_air === 0 ? '— (рідинне)' : '—');
+document.getElementById('res_ac_air_v').innerText = isFinite(v_air) ? v_air.toFixed(1) + ' м/с' : '—';
+document.getElementById('res_ac_fan_p').innerText = (v_air > 0 && isFinite(P_fan) && P_fan > 0 && P_fan < 100) ? P_fan.toFixed(2) + ' Вт' : (v_air === 0 ? '— (рідинне)' : '—');
     
     // --- Вивід ---
     document.getElementById('res_ac_sync_n').innerText = sync_n + ' об/хв';
@@ -998,10 +1011,10 @@ function calculateACPro() {
     const statusEl = document.getElementById('ac_thermal_status');
     statusEl.innerHTML = `<div class="${status.status}">Статус: ${status.label} (запас ${Math.round(status.margin)}°C)</div>`;
     
-    document.getElementById('res_ac_airflow').innerText = Q_air_m3h.toFixed(1) + ' м³/год';
-    document.getElementById('res_ac_fan_d').innerText = (D_fan > 0 && D_fan < 500) ? D_fan.toFixed(0) + ' мм' : '—';
-    document.getElementById('res_ac_air_v').innerText = v_air.toFixed(1) + ' м/с';
-    document.getElementById('res_ac_fan_p').innerText = (P_fan > 0 && P_fan < 100) ? P_fan.toFixed(2) + ' Вт' : '—';
+//    document.getElementById('res_ac_airflow').innerText = Q_air_m3h.toFixed(1) + ' м³/год';
+//    document.getElementById('res_ac_fan_d').innerText = (D_fan > 0 && D_fan < 500) ? D_fan.toFixed(0) + ' мм' : '—';
+//    document.getElementById('res_ac_air_v').innerText = v_air.toFixed(1) + ' м/с';
+//    document.getElementById('res_ac_fan_p').innerText = (P_fan > 0 && P_fan < 100) ? P_fan.toFixed(2) + ' Вт' : '—';
     
     const Bd_ac = 0.6;
     const fluxLevel = Math.min(1, Bd_ac / steel.bsat);
