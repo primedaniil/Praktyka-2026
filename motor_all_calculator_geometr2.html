@@ -112,7 +112,9 @@
         .btn-dc:hover { background-color: #1d4ed8; }
         .btn-ac { background-color: var(--accent-color); }
         .btn-ac:hover { background-color: #0f766e; }
-        
+        .btn-cast {background-color: #7c3aed; margin-top: 10px;}
+		.btn-cast:hover {background-color: #6d28d9;}
+		
         .results {
             margin-top: 16px;
             padding: 14px;
@@ -343,6 +345,8 @@
             </div>
             
             <button class="btn-dc" onclick="calculateDCPro()">📊 Оновити розрахунок ДПС</button>
+			<!-- Кнопка переходу в модуль лиття -->
+			<button class="btn-cast" onclick="goToCasting('dc')">🏭 Перейти до модуля лиття (ДПC)</button>
             
             <div class="results" id="dc_results">
                 <h4>⚡ Електромагнітний розрахунок</h4>
@@ -603,6 +607,75 @@ function getStatusInfo(temp, maxAllowed) {
     if (margin > 30) return { status: 'safe', label: '✅ Норма', class: 'status-safe', margin: margin };
     if (margin > 10) return { status: 'warning', label: '⚠️ Увага', class: 'status-warning', margin: margin };
     return { status: 'danger', label: '🔴 Критично!', class: 'status-danger', margin: margin };
+}
+
+// ============================================================
+// ПЕРЕХІД ДО МОДУЛЯ ЛИТТЯ
+// ============================================================
+function goToCasting(type) {
+    let data;
+    
+    if (type === 'dc') {
+        data = {
+            type: 'dc',
+            timestamp: new Date().toISOString(),
+            power: 500,
+            voltage: parseFloat(document.getElementById('dc_voltage').value),
+            speed: parseFloat(document.getElementById('dc_speed').value),
+            eff: parseFloat(document.getElementById('dc_eff').value),
+            z: parseInt(document.getElementById('dc_z').value),
+            insulation_class: document.getElementById('dc_insulation_class').value,
+            insulation_temp: parseFloat(document.getElementById('dc_insulation_temp').value),
+            cooling: document.getElementById('dc_cooling').value,
+            steel: document.getElementById('dc_steel').value,
+            calculated: {
+                D_arm: parseFloat(document.getElementById('res_dc_d_arm').innerText) || 40,
+                L_arm: parseFloat(document.getElementById('res_dc_l_arm').innerText) || 32,
+                I_start: parseFloat(document.getElementById('res_dc_i_start').innerText) || 127,
+                M_nom: parseFloat(document.getElementById('res_dc_torque').innerText) || 1.59,
+                P_loss: parseFloat(document.getElementById('res_dc_ploss').innerText) || 334.4,
+                P_cu: parseFloat(document.getElementById('res_dc_pcu').innerText) || 319,
+                P_steel: parseFloat(document.getElementById('res_dc_psteel').innerText) || 15.4,
+                dt: parseFloat(document.getElementById('res_dc_dt').innerText) || 162,
+                t_actual: 40 + parseFloat(document.getElementById('res_dc_dt').innerText) || 202
+            }
+        };
+    } else if (type === 'ac') {
+        data = {
+            type: 'ac',
+            timestamp: new Date().toISOString(),
+            power: 500,
+            voltage: parseFloat(document.getElementById('ac_voltage').value),
+            poles: parseInt(document.getElementById('ac_poles').value),
+            eff: parseFloat(document.getElementById('ac_eff').value),
+            cos_phi: parseFloat(document.getElementById('ac_cos').value),
+            slip: parseFloat(document.getElementById('ac_slip').value),
+            z1: parseInt(document.getElementById('ac_z1').value),
+            insulation_class: document.getElementById('ac_insulation_class').value,
+            insulation_temp: parseFloat(document.getElementById('ac_insulation_temp').value),
+            cooling: document.getElementById('ac_cooling').value,
+            steel: document.getElementById('ac_steel').value,
+            calculated: {
+                D1: parseFloat(document.getElementById('res_ac_d_stator').innerText) || 70,
+                L1: parseFloat(document.getElementById('res_ac_l_stator').innerText) || 49,
+                I_start: parseFloat(document.getElementById('res_ac_i_start').innerText) || 13.4,
+                M_nom: parseFloat(document.getElementById('res_ac_torque').innerText) || 3.39,
+                n_nom: parseFloat(document.getElementById('res_ac_n').innerText) || 1410,
+                sync_n: parseFloat(document.getElementById('res_ac_sync_n').innerText) || 1500,
+                P_loss: parseFloat(document.getElementById('res_ac_ploss').innerText) || 96.0,
+                P_cu: parseFloat(document.getElementById('res_ac_pcu').innerText) || 77.3,
+                P_steel: parseFloat(document.getElementById('res_ac_psteel').innerText) || 18.7,
+                dt: parseFloat(document.getElementById('res_ac_dt').innerText) || 133,
+                t_actual: 40 + parseFloat(document.getElementById('res_ac_dt').innerText) || 173
+            }
+        };
+    }
+    
+    // Збереження в localStorage
+    localStorage.setItem('casting_data', JSON.stringify(data));
+    
+    // Перехід до модуля лиття
+    window.open('casting.html', '_blank');
 }
 
 // ============================================================
