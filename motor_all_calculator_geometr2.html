@@ -903,59 +903,78 @@ function calculateACPro() {
     const cooling = getCoolingData('ac');
     const steel = getSteelData('ac');
     
-    // --- Електромагнітні ---
-    const sync_n = (50 * 60) / (poles / 2);
-    const n = sync_n * (1 - slip);
-    const P1 = P2 / eff;
-    const S1 = P1 / cosPhi;
-    const I = S1 / (Math.sqrt(3) * U);
-    const torque = P2 / (2 * Math.PI * n / 60);
+    // ============================================================
+    // 1. ЕЛЕКТРОМАГНІТНІ ПАРАМЕТРИ
+    // ============================================================
+    const sync_n = (50 * 60) / (poles / 2);      // синхронна частота
+    const n = sync_n * (1 - slip);                // номінальна частота
+    const P1 = P2 / eff;                          // активна потужність
+    const S1 = P1 / cosPhi;                       // повна потужність
+    const I = S1 / (Math.sqrt(3) * U);            // лінійний струм
+    const torque = P2 / (2 * Math.PI * n / 60);   // обертовий момент
     
-    // --- Геометрія ---
+    // ============================================================
+    // 2. ГЕОМЕТРІЯ СТАТОРА
+    // ============================================================
     let D1 = Math.pow(P2 / (n / 1000), 0.33) * 8 * 10;
     D1 = Math.round(D1 / 5) * 5;
     let L1 = D1 * 0.7;
     L1 = Math.round(L1 / 5) * 5;
     
-    const q_slots = Z1 / (poles * 3);
-    const A_desired = 200;
+    const q_slots = Z1 / (poles * 3);             // число пазів на полюс і фазу
+    const A_desired = 200;                        // бажана лінійна нагрузка
     const u_p = Math.round((A_desired * Math.PI * D1 / 10) / (I * 3));
-    const y = Math.round(Z1 / poles);
+    const y = Math.round(Z1 / poles);             // крок обмотки
     
-    // --- Геометрія паза ---
+    // ============================================================
+    // 3. ГЕОМЕТРІЯ ПАЗА
+    // ============================================================
     const b_p = Math.round((Math.PI * D1 / Z1) * 0.5 * 10) / 10;
     const h_p = Math.round(D1 * 0.18 * 10) / 10;
     const S_p = b_p * h_p;
-    const wire_s = I / (3 * 5);
+    const wire_s = I / (3 * 5);                   // J = 5 А/мм²
     const S_cu = wire_s * u_p * 2;
     const k_fill = S_cu / S_p;
     
-    // --- Тепловий режим ---
-    const l_avg = L1 + D1 * 0.5;
+    // ============================================================
+    // 4. ТЕПЛОВИЙ РЕЖИМ
+    // ============================================================
+    
+    // --- 4.1. Опір фази ---
+    const l_avg = L1 + D1 * 0.5;                  // середня довжина витка
     const R_ph = rho_cu * (l_avg / 1000) * u_p * (Z1 / 3) / wire_s;
+    
+    // --- 4.2. Втрати в міді ---
     const P_cu = 3 * I * I * R_ph;
+    
+    // --- 4.3. Зовнішній діаметр статора ---
     const D_ext = D1 * 1.25;
-   const steelMassAC = Math.PI * (Math.pow(D_ext/2000, 2) - Math.pow(D1/2000, 2)) * (L1/1000) * 7850; 
-//    const steelMassAC = Math.PI * (D1/1000) * (L1/1000) * 7850 * 0.6;
-//    const P_steel = steel.loss * steelMassAC * (50/50) * 1.5;
-    // 4. Втрати в сталі
-	const P_steel = steel.loss * steelMassAC * 1.5;
-	
+    
+    // --- 4.4. Маса сталі (кільце!) ---
+    // Формула: об'єм кільця = π · (R_зовн² - R_внутр²) · L
+    const steelMassAC = Math.PI * (Math.pow(D_ext/2000, 2) - Math.pow(D1/2000, 2)) * (L1/1000) * 7850;
+    
+    // --- 4.5. Втрати в сталі ---
+    const P_steel = steel.loss * steelMassAC * 1.5;
+    
+    // --- 4.6. Сумарні втрати ---
     const P_loss = P_cu + P_steel;
-	// 6. Площа охолодження (з ребрами)
-	const k_rib = 1.8;
-	const S_cool = Math.PI * D_ext * L1 * k_rib / 1e6;
-	
- //   const S_cool = Math.PI * D_ext * L1*1.8 / 1e6;
+    
+    // --- 4.7. Площа охолодження (з ребрами) ---
+    const k_rib = 1.8;                            // коефіцієнт оребрення
+    const S_cool = Math.PI * D_ext * L1 * k_rib / 1e6;
+    
+    // --- 4.8. Тепловий потік ---
     const q_flux = P_loss / S_cool;
+    
+    // --- 4.9. Перегрів ---
     const alpha = cooling.alpha;
-	    // Тепловий опір
-//	const R_thermal = 1 / (cooling.alpha * S_cool) + 0.4;
     const dt = q_flux / alpha;
-//	const dt = P_loss * R_thermal;
     const t_actual = 40 + dt;
     
-    // --- Пускові ---
+    // ============================================================
+    // 5. ПУСКОВІ ХАРАКТЕРИСТИКИ
+    // ============================================================
     const k_start = 5 + (6 - poles/2) * 0.5;
     const I_start = I * k_start;
     const M_start = torque * (1.5 + 0.5 * (6 - poles/2));
@@ -963,49 +982,51 @@ function calculateACPro() {
     const k_m_start = M_start / torque;
     const t_start = (2 * Math.PI * n / 60) * (0.15) / (M_start - torque);
     
-    // --- Вентилятор ---
-    const Q_air = P_loss / (1.2 * 1000 * 5);
-    const Q_air_m3h = Q_air * 3600;
-    const D_fan = Math.sqrt(Q_air / (Math.PI * 0.5 * cooling.v_air)) * 1000;
-    const v_air = cooling.v_air;
-    const P_fan = 0.5 * 1.2 * Q_air * (v_air * v_air) / 0.6;
-
-	// --- Вентилятор ---
-//const Q_air = P_loss / (1.2 * 1000 * 5);
-//const Q_air_m3h = Q_air * 3600;
-//const v_air = cooling.v_air !== undefined ? cooling.v_air : 8;
-//const D_fan = v_air > 0 ? Math.sqrt(Q_air / (Math.PI * 0.5 * v_air)) * 1000 : 0;
-//const P_fan = v_air > 0 ? 0.5 * 1.2 * Q_air * (v_air * v_air) / 0.6 : 0;
-
-// Вивід
-//document.getElementById('res_ac_airflow').innerText = isFinite(Q_air_m3h) ? Q_air_m3h.toFixed(1) + ' м³/год' : '—';
-//document.getElementById('res_ac_fan_d').innerText = (v_air > 0 && isFinite(D_fan) && D_fan > 0 && D_fan < 500) ? D_fan.toFixed(0) + ' мм' : (v_air === 0 ? '— (рідинне)' : '—');
-//document.getElementById('res_ac_air_v').innerText = isFinite(v_air) ? v_air.toFixed(1) + ' м/с' : '—';
-//document.getElementById('res_ac_fan_p').innerText = (v_air > 0 && isFinite(P_fan) && P_fan > 0 && P_fan < 100) ? P_fan.toFixed(2) + ' Вт' : (v_air === 0 ? '— (рідинне)' : '—');
+    // ============================================================
+    // 6. РОЗРАХУНОК ВЕНТИЛЯТОРА
+    // ============================================================
+    const Q_air = P_loss / (1.2 * 1000 * 5);      // м³/с
+    const Q_air_m3h = Q_air * 3600;               // м³/год
+    const v_air = cooling.v_air !== undefined ? cooling.v_air : 8;
+    const D_fan = v_air > 0
+        ? Math.sqrt(Q_air / (Math.PI * 0.5 * v_air)) * 1000
+        : 0;
+    const P_fan = v_air > 0
+        ? 0.5 * 1.2 * Q_air * (v_air * v_air) / 0.6
+        : 0;
     
-    // --- Вивід ---
+    // ============================================================
+    // 7. ВИВІД РЕЗУЛЬТАТІВ
+    // ============================================================
+    
+    // --- 7.1. Електромагнітний розрахунок ---
     document.getElementById('res_ac_sync_n').innerText = sync_n + ' об/хв';
     document.getElementById('res_ac_n').innerText = n.toFixed(0) + ' об/хв';
     document.getElementById('res_ac_p1').innerText = P1.toFixed(1) + ' Вт';
     document.getElementById('res_ac_i').innerText = I.toFixed(2) + ' А';
     document.getElementById('res_ac_torque').innerText = torque.toFixed(2) + ' Н·м';
     
+    // --- 7.2. Геометрія статора ---
     document.getElementById('res_ac_d_stator').innerText = D1 + ' мм';
     document.getElementById('res_ac_l_stator').innerText = L1 + ' мм';
     document.getElementById('res_ac_u_p').innerText = u_p;
     document.getElementById('res_ac_y').innerText = y;
+    
+    // --- 7.3. Геометрія паза ---
     document.getElementById('res_ac_bp').innerText = b_p.toFixed(1) + ' мм';
     document.getElementById('res_ac_hp').innerText = h_p.toFixed(1) + ' мм';
     document.getElementById('res_ac_sp').innerText = S_p.toFixed(2) + ' мм²';
     document.getElementById('res_ac_scu').innerText = S_cu.toFixed(2) + ' мм²';
     document.getElementById('res_ac_kfill').innerText = (k_fill * 100).toFixed(1) + '%';
     
+    // --- 7.4. Пускові характеристики ---
     document.getElementById('res_ac_i_start').innerText = I_start.toFixed(2) + ' А';
     document.getElementById('res_ac_m_start').innerText = M_start.toFixed(2) + ' Н·м';
     document.getElementById('res_ac_k_i_start').innerText = k_i_start.toFixed(1) + '×';
     document.getElementById('res_ac_k_m_start').innerText = k_m_start.toFixed(1) + '×';
     document.getElementById('res_ac_t_start').innerText = t_start.toFixed(2) + ' с';
     
+    // --- 7.5. Тепловий режим ---
     document.getElementById('res_ac_pcu').innerText = P_cu.toFixed(2) + ' Вт';
     document.getElementById('res_ac_psteel').innerText = P_steel.toFixed(2) + ' Вт';
     document.getElementById('res_ac_ploss').innerText = P_loss.toFixed(2) + ' Вт';
@@ -1015,19 +1036,34 @@ function calculateACPro() {
     document.getElementById('res_ac_ins_class').innerText = ins.class + ' (' + ins.temp + '°C)';
     document.getElementById('res_ac_tmax').innerText = ins.temp + ' °C';
     
+    // --- 7.6. Статус теплового режиму ---
     const status = getStatusInfo(t_actual, ins.temp);
     const statusEl = document.getElementById('ac_thermal_status');
     statusEl.innerHTML = `<div class="${status.status}">Статус: ${status.label} (запас ${Math.round(status.margin)}°C)</div>`;
     
-    document.getElementById('res_ac_airflow').innerText = Q_air_m3h.toFixed(1) + ' м³/год';
-    document.getElementById('res_ac_fan_d').innerText = (D_fan > 0 && D_fan < 1000) ? D_fan.toFixed(0)/4 + ' мм' : '—';
-    document.getElementById('res_ac_air_v').innerText = v_air.toFixed(1) + ' м/с';
-    document.getElementById('res_ac_fan_p').innerText = (P_fan > 0 && P_fan < 1000) ? P_fan.toFixed(2)/4 + ' Вт' : '—';
-
+    // --- 7.7. Вентилятор ---
+    document.getElementById('res_ac_airflow').innerText =
+        isFinite(Q_air_m3h) ? Q_air_m3h.toFixed(1) + ' м³/год' : '—';
+    
+    document.getElementById('res_ac_fan_d').innerText =
+        (v_air > 0 && isFinite(D_fan) && D_fan > 0 && D_fan < 500)
+            ? D_fan.toFixed(0) + ' мм'
+            : (v_air === 0 ? '— (рідинне)' : '—');
+    
+    document.getElementById('res_ac_air_v').innerText =
+        isFinite(v_air) ? v_air.toFixed(1) + ' м/с' : '—';
+    
+    document.getElementById('res_ac_fan_p').innerText =
+        (v_air > 0 && isFinite(P_fan) && P_fan > 0 && P_fan < 100)
+            ? P_fan.toFixed(2) + ' Вт'
+            : (v_air === 0 ? '— (рідинне)' : '—');
+    
+    // --- 7.8. Візуалізація поля ---
     const Bd_ac = 0.6;
     const fluxLevel = Math.min(1, Bd_ac / steel.bsat);
     drawField('fieldAC', 'ac', fluxLevel);
     
+    // --- 7.9. Показати результати ---
     document.getElementById('ac_results').classList.add('visible');
 }
 
