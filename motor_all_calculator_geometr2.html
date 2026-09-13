@@ -1012,7 +1012,7 @@ function calculateACPro() {
     statusEl.innerHTML = `<div class="${status.status}">Статус: ${status.label} (запас ${Math.round(status.margin)}°C)</div>`;
     
     document.getElementById('res_ac_airflow').innerText = Q_air_m3h.toFixed(1) + ' м³/год';
-    document.getElementById('res_ac_fan_d').innerText = (D_fan > 0 && D_fan < 500) ? D_fan.toFixed(0) + ' мм' : '—';
+    document.getElementById('res_ac_fan_d').innerText = (D_fan > 0 && D_fan < 1000) ? D_fan.toFixed(0) + ' мм' : '—';
     document.getElementById('res_ac_air_v').innerText = v_air.toFixed(1) + ' м/с';
     document.getElementById('res_ac_fan_p').innerText = (P_fan > 0 && P_fan < 100) ? P_fan.toFixed(2) + ' Вт' : '—';
 
