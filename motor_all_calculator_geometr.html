@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -165,7 +165,7 @@
             </div>
             
             <div class="input-group">
-                <label>Частота обертання (n), об/мин</label>
+                <label>Частота обертання (n), об/хв</label>
                 <input type="number" id="dc_speed" value="3000" min="500" max="10000">
             </div>
             
@@ -242,9 +242,9 @@
             <div class="input-group">
                 <label>Число полюсів статора (2p)</label>
                 <select id="ac_poles">
-                    <option value="2">2 (3000 об/мин)</option>
-                    <option value="4" selected>4 (1500 об/мин)</option>
-                    <option value="6">6 (1000 об/мин)</option>
+                    <option value="2">2 (3000 об/хв)</option>
+                    <option value="4" selected>4 (1500 об/хв)</option>
+                    <option value="6">6 (1000 об/хв)</option>
                 </select>
             </div>
             
@@ -480,8 +480,8 @@ const y = Math.round(Z1 / poles);
         const dt = q_flux / alpha;
 
         // Вывод
-        document.getElementById('res_ac_sync_n').innerText = sync_n + ' об/мин';
-        document.getElementById('res_ac_n').innerText = n.toFixed(0) + ' об/мин';
+        document.getElementById('res_ac_sync_n').innerText = sync_n + ' об/хв';
+        document.getElementById('res_ac_n').innerText = n.toFixed(0) + ' об/хв';
         document.getElementById('res_ac_p1').innerText = P1.toFixed(1) + ' Вт';
         document.getElementById('res_ac_i').innerText = I.toFixed(2) + ' А';
         document.getElementById('res_ac_torque').innerText = torque.toFixed(2) + ' Н·м';
