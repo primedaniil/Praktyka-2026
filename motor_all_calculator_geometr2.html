@@ -91,6 +91,11 @@
             outline: 2px solid #93c5fd;
             background: #ffffff;
         }
+		.powder-title {
+			color: #0891b2;
+			font-weight: bold;
+		}
+		
         .readonly-input {
             background-color: #f3f4f6;
             cursor: not-allowed;
@@ -114,7 +119,11 @@
         .btn-ac:hover { background-color: #0f766e; }
         .btn-cast {background-color: #7c3aed; margin-top: 10px;}
 		.btn-cast:hover {background-color: #6d28d9;}
+		.btn-press {background-color: #b45309; margin-top: 10px;}
 		
+		.btn-press:hover {
+			background-color: #92400e;
+		}
         .results {
             margin-top: 16px;
             padding: 14px;
@@ -346,7 +355,7 @@
             
             <button class="btn-dc" onclick="calculateDCPro()">📊 Оновити розрахунок ДПС</button>
 			<button class="btn-cast" onclick="goToCasting('dc')">🏭 Перейти до модуля лиття (ДПC)</button>
-            
+			<button class="btn-press" onclick="goToPressing('dc')">🔨 Перейти до модуля пресування якоря</button>
             <div class="results" id="dc_results">
                 <h4>⚡ Електромагнітний розрахунок</h4>
                 <div id="dcBasicResults">
@@ -417,6 +426,24 @@
                     </div>
                     <div style="font-size:0.6rem;color:#94a3b8;text-align:center;">Якісний розподіл магнітного поля</div>
                 </div>
+				<!-- БЛОК: Розрахунок для порошкової технології -->
+				<div class="sub-section">
+					<h5 class="powder-title">🔬 Розрахунок для порошкової технології</h5>
+					
+					<div class="result-row"><span>Кінцевий діаметр (D_кінц):</span><span class="result-val" id="res_dc_powder_final">-</span></div>
+					<div class="result-row"><span>Діаметр після пресування:</span><span class="result-val" id="res_dc_powder_pressing">-</span></div>
+					<div class="result-row"><span>Діаметр до спікання:</span><span class="result-val" id="res_dc_powder_sintering">-</span></div>
+					<div class="result-row"><span>Діаметр калібруючого кільця:</span><span class="result-val" id="res_dc_powder_ring">-</span></div>
+					<div class="result-row"><span>Припуск на калібрування:</span><span class="result-val" id="res_dc_powder_allowance">-</span></div>
+					<div class="result-row"><span>Усадка при спіканні:</span><span class="result-val" id="res_dc_powder_shrink">-</span></div>
+					<div class="result-row"><span>Посадка вала:</span><span class="result-val" id="res_dc_powder_fit">-</span></div>
+					<div class="result-row"><span>Натяг (min–max):</span><span class="result-val" id="res_dc_powder_nat">-</span></div>
+					<div class="result-row"><span>Точність калібрування:</span><span class="result-val" id="res_dc_powder_tol">-</span></div>
+					<div class="result-row"><span>Шорсткість після калібрування:</span><span class="result-val" id="res_dc_powder_rough">-</span></div>
+					<div class="result-row"><span>Повітряний зазор:</span><span class="result-val" id="res_dc_powder_gap">-</span></div>
+					
+					<div class="warning">⚠️ Припуски та допуски — орієнтовні. ДСТУ 8981:2020 «Виливки з металів та сплавів. Допуски розмірів, маси та припуски на механічне оброблення».</div>
+				</div>
             </div>
         </div>
         
@@ -679,6 +706,70 @@ function goToCasting(type) {
 }
 
 // ============================================================
+// ПЕРЕХІД ДО МОДУЛЯ пресування
+// ============================================================
+
+function goToPressing(type) {
+    let data;
+    
+    if (type === 'dc') {
+	
+	    // Собираем все данные, включая порошковую технологию
+		const D_arm = parseFloat(document.getElementById('res_dc_d_arm').innerText) || 40;
+        const L_arm = parseFloat(document.getElementById('res_dc_l_arm').innerText) || 32;
+		const P_loss = parseFloat(document.getElementById('res_dc_ploss').innerText) || 334.4;
+		const Z = parseInt(document.getElementById('dc_z').value) || 24;
+		const I_start = parseFloat(document.getElementById('res_dc_i_start').innerText) || 127;
+
+        const powder = calculatePowderTechnology(D_arm, L_arm, Z, P_loss);
+
+        data = {
+            type: 'dc',
+            timestamp: new Date().toISOString(),
+            power: 500,
+            speed: parseFloat(document.getElementById('dc_speed').value) || 3000,
+            z: parseInt(document.getElementById('dc_z').value),
+            calculated: {
+                D_arm: parseFloat(document.getElementById('res_dc_d_arm').innerText) || 40,
+                L_arm: parseFloat(document.getElementById('res_dc_l_arm').innerText) || 32,
+                P_loss: parseFloat(document.getElementById('res_dc_ploss').innerText) || 334.4
+            },
+			// 🔽 НОВОЕ: Данные порошковой технологии
+            powder: {
+                D_final: powder.D_final,
+                D_after_pressing: powder.D_after_pressing,
+                D_before_sintering: powder.D_before_sintering,
+                D_calibration_ring: powder.D_calibration_ring,
+                allowance_calibration: powder.allowance_calibration,
+                shrink_factor: powder.shrink_factor,
+                fit_shaft: powder.fit_shaft,
+                N_min: powder.N_min,
+                N_max: powder.N_max,
+                tolerance_calibration: powder.tolerance.calibration,
+                roughness: powder.roughness.after_calibration,
+                air_gap: powder.air_gap,
+                air_gap_tolerance: powder.air_gap_tolerance
+            }
+        };
+    }
+    
+    localStorage.setItem('pressing_data', JSON.stringify(data));
+//    window.open('pressing.html', '_blank');
+// ============================================================
+// ВІДЛАГОДЖЕННЯ: вивести дані в консоль замість переходу
+// ============================================================
+console.log('=== ДАНІ ДЛЯ ПРЕСУВАННЯ ===');
+console.log(JSON.stringify(data, null, 2));
+console.log('=== КІНЕЦЬ ===');
+
+// Тимчасово закоментувати перехід
+// window.open('pressing.html', '_blank');
+
+// Або показати в alert для копіювання
+alert('Дані в консолі (F12). Натисніть OK для переходу.');
+window.open('pressing_two.html', '_blank');
+}
+// ============================================================
 // 2. ВІЗУАЛІЗАЦІЯ ПОЛЯ
 // ============================================================
 function drawField(canvasId, type, fluxLevel) {
@@ -763,6 +854,112 @@ function drawField(canvasId, type, fluxLevel) {
 }
 
 // ============================================================
+// РОЗРАХУНОК ДЛЯ ПОРОШКОВОЇ ТЕХНОЛОГІЇ
+// ============================================================
+function calculatePowderTechnology(D_arm, L_arm, Z, P_loss) {
+    
+    // ============================================================
+    // 1. ПРИПУСК НА КАЛІБРУВАННЯ
+    // ============================================================
+    // Після пресування сердечник має бути трохи більшим,
+    // щоб після калібрування отримати точний розмір
+    const allowance_calibration = 0.1;  // мм на сторону
+    const D_after_pressing = D_arm + 2 * allowance_calibration;
+    // = 40 + 0.2 = 40.2 мм
+    
+    // ============================================================
+    // 2. ПРИПУСК НА УСАДКУ ПРИ СПІКАННІ
+    // ============================================================
+    // При спіканні порошок усаджується (зменшується)
+    const shrink_factor = 1.02;  // 2% усадка
+    const D_before_sintering = D_after_pressing * shrink_factor;
+    // = 40.2 · 1.02 = 41.0 мм
+    
+    // ============================================================
+    // 3. ДІАМЕТР КАЛІБРУЮЧОГО КІЛЬЦЯ
+    // ============================================================
+    // Кільце має точний розмір кінцевого виробу
+    const D_calibration_ring = D_arm;  // Ø40.0 мм
+    const tolerance_ring = 0.005;      // ±0.005 мм
+    
+    // ============================================================
+    // 4. ПОСАДКА ВАЛА
+    // ============================================================
+    const fit_shaft = 'H7/p6';
+    const d_shaft = 10;  // мм
+    // Натяг для H7/p6 при Ø10:
+    const N_min = 0.000;  // мм
+    const N_max = 0.024;  // мм
+    
+    // ============================================================
+    // 5. ТОЧНІСТЬ ОБРОБКИ
+    // ============================================================
+    const tolerance = {
+        calibration: 0.01,   // ±0.01 мм
+        turning: 0.005,      // ±0.005 мм
+        grinding: 0.003      // ±0.003 мм
+    };
+    
+    // ============================================================
+    // 6. ДОДАТКОВІ РОЗРАХУНКИ
+    // ============================================================
+    
+    // Припуск на проточку (якщо потрібна)
+    const allowance_turning = 0.15;  // мм на сторону
+    
+    // Діаметр після проточки
+    const D_after_turning = D_arm + 2 * allowance_turning;
+    
+    // Шорсткість поверхні
+    const roughness = {
+        after_pressing: 'Ra 3.2',
+        after_sintering: 'Ra 2.5',
+        after_calibration: 'Ra 0.8',
+        after_turning: 'Ra 1.6',
+        after_grinding: 'Ra 0.4'
+    };
+    
+    // Зазор зі статором (номінальний)
+    const air_gap = 0.4;  // мм
+    const air_gap_tolerance = 0.05;  // мм
+    
+    // ============================================================
+    // 7. ПОВЕРНЕННЯ РЕЗУЛЬТАТІВ
+    // ============================================================
+    return {
+        // Розміри
+        D_final: D_arm,
+        D_after_pressing: D_after_pressing,
+        D_before_sintering: D_before_sintering,
+        D_calibration_ring: D_calibration_ring,
+        D_after_turning: D_after_turning,
+        allowance_calibration: allowance_calibration,
+        allowance_turning: allowance_turning,
+        
+        // Посадки
+        fit_shaft: fit_shaft,
+        N_min: N_min,
+        N_max: N_max,
+        d_shaft: d_shaft,
+        
+        // Точність
+        tolerance: tolerance,
+        tolerance_ring: tolerance_ring,
+        
+        // Шорсткість
+        roughness: roughness,
+        
+        // Зазор
+        air_gap: air_gap,
+        air_gap_tolerance: air_gap_tolerance,
+        
+        // Усадка
+        shrink_factor: shrink_factor
+    };
+}
+
+
+// ============================================================
 // 3. ДПТ - РОЗРАХУНОК
 // ============================================================
 function calculateDCPro() {
@@ -791,6 +988,7 @@ function calculateDCPro() {
     D_arm = Math.round(D_arm / 5) * 5;
     let L_arm = D_arm * 0.8;
     L_arm = Math.round(L_arm / 5) * 5;
+	
     
     const Bd = 0.55;
     const p = 1;
@@ -818,6 +1016,12 @@ function calculateDCPro() {
     const P_steel = steel.loss * steelMass * (n/1500) * 1.5;
     
     const P_loss = P_cu + P_steel;
+	
+	// ============================================================
+    // 🔽 РОЗРАХУНОК ДЛЯ ПОРОШКОВОЇ ТЕХНОЛОГІЇ
+    // ============================================================
+    const powderTech = calculatePowderTechnology(D_arm, L_arm, Z, P_loss);
+
     
     const S_cool = Math.PI * D_arm * L_arm / 1e6 + 2 * Math.PI * (D_arm/2) * (D_arm/2) / 1e6;
     const q_flux = P_loss / S_cool;
@@ -883,6 +1087,34 @@ function calculateDCPro() {
     
     const fluxLevel = Math.min(1, Bd / steel.bsat);
     drawField('fieldDC', 'dc', fluxLevel);
+	
+	// --- Розрахунок для порошкової технології ---
+	const powder = calculatePowderTechnology(D_arm, L_arm, Z, P_loss);
+
+	document.getElementById('res_dc_powder_final').innerText = 
+		powder.D_final.toFixed(1) + ' мм';
+	document.getElementById('res_dc_powder_pressing').innerText = 
+		powder.D_after_pressing.toFixed(2) + ' мм';
+	document.getElementById('res_dc_powder_sintering').innerText = 
+		powder.D_before_sintering.toFixed(2) + ' мм';
+	document.getElementById('res_dc_powder_ring').innerText = 
+		powder.D_calibration_ring.toFixed(1) + ' ± ' + 
+		powder.tolerance_ring.toFixed(3) + ' мм';
+	document.getElementById('res_dc_powder_allowance').innerText = 
+		powder.allowance_calibration.toFixed(2) + ' мм/сторону';
+	document.getElementById('res_dc_powder_shrink').innerText = 
+		((powder.shrink_factor - 1) * 100).toFixed(1) + '%';
+	document.getElementById('res_dc_powder_fit').innerText = 
+		powder.fit_shaft;
+	document.getElementById('res_dc_powder_nat').innerText = 
+		powder.N_min.toFixed(3) + '…' + powder.N_max.toFixed(3) + ' мм';
+	document.getElementById('res_dc_powder_tol').innerText = 
+		'± ' + powder.tolerance.calibration.toFixed(3) + ' мм';
+	document.getElementById('res_dc_powder_rough').innerText = 
+		powder.roughness.after_calibration;
+	document.getElementById('res_dc_powder_gap').innerText = 
+		powder.air_gap.toFixed(2) + ' ± ' + 
+		powder.air_gap_tolerance.toFixed(2) + ' мм';
     
     document.getElementById('dc_results').classList.add('visible');
 }

@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 950" font-family="Arial, sans-serif">
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font-size: 24px; fill: #1e3a8a; font-weight: bold; text-anchor: middle; }
+      .subtitle { font-size: 14px; fill: #64748b; text-anchor: middle; }
+
+      .matrix { fill: #94a3b8; stroke: #475569; stroke-width: 1.5; }
+      .matrix-inner { fill: #fef9c3; stroke: #eab308; stroke-width: 1.5; }
+      .punch { fill: #dc2626; stroke: #991b1b; stroke-width: 1.5; }
+      .mandrel { fill: #16a34a; stroke: #166534; stroke-width: 1.5; }
+      .slot-rod { fill: #f59e0b; stroke: #b45309; stroke-width: 1.5; }
+      .powder { fill: #fbbf24; opacity: 0.6; stroke: #b45309; stroke-width: 1; }
+      .base { fill: #64748b; stroke: #475569; stroke-width: 1.5; }
+      .ejector { fill: #7c3aed; stroke: #6d28d9; stroke-width: 1.5; }
+
+      .dim-line { stroke: #dc2626; stroke-width: 1.5; fill: none; }
+      .dim-text { font-size: 12px; fill: #dc2626; font-weight: bold; }
+
+      .label { font-size: 13px; fill: #1e293b; font-weight: bold; }
+      .note { font-size: 11px; fill: #64748b; font-style: italic; }
+      .comment { font-size: 12px; fill: #334155; }
+
+      .arrow { stroke: #dc2626; stroke-width: 3; fill: none; }
+    </style>
+  </defs>
+
+  <rect width="1100" height="950" class="bg"/>
+  <text x="550" y="35" class="title">ПРЕС-ФОРМА ДЛЯ ПРЕСУВАННЯ СЕРДЕЧНИКА ЯКОРЯ</text>
+  <text x="550" y="60" class="subtitle">Сердечник якоря ДПТ 500 Вт · 24 пази · Ø40 мм</text>
+
+  <!-- ============================================================ -->
+  <!-- РОЗРІЗ А-А (вид спереду)                                    -->
+  <!-- ============================================================ -->
+
+  <text x="300" y="100" class="label" text-anchor="middle" fill="#1e3a8a">РОЗРІЗ А-А</text>
+
+  <!-- ОСНОВА -->
+  <rect x="100" y="750" width="400" height="80" class="base" rx="4"/>
+  <text x="300" y="795" class="label" text-anchor="middle" fill="#ffffff">ОСНОВА</text>
+
+  <!-- МАТРИЦЯ -->
+  <rect x="100" y="350" width="400" height="400" class="matrix" rx="4"/>
+
+  <!-- ПОРОЖНИНА МАТРИЦІ -->
+  <rect x="150" y="380" width="300" height="370" class="matrix-inner"/>
+
+  <!-- ЦЕНТРАЛЬНИЙ СТЕРЖЕНЬ (Ø10 мм, центр X = 300) -->
+  <rect x="295" y="200" width="10" height="550" class="mandrel"/>
+
+  <!-- СТЕРЖНІ ПАЗІВ (в розрізі — прямокутники 2.5 мм) -->
+  <!-- Лівий стержень: X = 300 - 105 = 195 -->
+  <rect x="193.75" y="380" width="2.5" height="370" class="slot-rod"/>
+  <!-- Правий стержень: X = 300 + 105 = 405 -->
+  <rect x="403.75" y="380" width="2.5" height="370" class="slot-rod"/>
+
+  <!-- ПОРОШОК -->
+  <rect x="150" y="450" width="300" height="300" class="powder"/>
+
+  <!-- ПУАНСОН -->
+  <rect x="150" y="250" width="300" height="130" class="punch" rx="4"/>
+  <text x="300" y="320" class="label" text-anchor="middle" fill="#ffffff">ПУАНСОН</text>
+
+  <!-- ХВОСТОВИК ПУАНСОНА -->
+  <rect x="250" y="150" width="100" height="100" class="punch" rx="4"/>
+
+  <!-- СТРІЛКА ТИСКУ -->
+  <line x1="300" y1="80" x2="300" y2="145" class="arrow"/>
+  <polygon points="295,145 300,155 305,145" fill="#dc2626"/>
+  <text x="350" y="110" class="dim-text">F = 707 кН</text>
+
+  <!-- ВИТЯГУВАЧ -->
+  <rect x="295" y="750" width="10" height="40" class="ejector"/>
+
+  <!-- Розмір ширини паза (2.5 мм без Ø) -->
+  <line x1="193.75" y1="770" x2="196.25" y2="770" class="dim-line"/>
+  <line x1="193.75" y1="765" x2="193.75" y2="775" class="dim-line"/>
+  <line x1="196.25" y1="765" x2="196.25" y2="775" class="dim-line"/>
+  <text x="195" y="785" class="dim-text" text-anchor="middle">2.5</text>
+
+  <!-- ============================================================ -->
+  <!-- ПОЗНАЧЕННЯ ЕЛЕМЕНТІВ                                         -->
+  <!-- ============================================================ -->
+
+  <rect x="520" y="350" width="150" height="24" fill="#ffffff" stroke="#166534" rx="4"/>
+  <text x="595" y="366" class="label" text-anchor="middle" fill="#166534">Центр. стержень Ø10</text>
+  <line x1="520" y1="362" x2="305" y2="362" stroke="#166534" stroke-width="1.5"/>
+
+  <rect x="520" y="450" width="150" height="24" fill="#ffffff" stroke="#b45309" rx="4"/>
+  <text x="595" y="466" class="label" text-anchor="middle" fill="#b45309">Стержень паза Ø2.5</text>
+  <line x1="520" y1="462" x2="406" y2="462" stroke="#b45309" stroke-width="1.5"/>
+
+  <rect x="550" y="550" width="150" height="24" fill="#ffffff" stroke="#b45309" rx="4"/>
+  <text x="625" y="566" class="label" text-anchor="middle" fill="#b45309">Порошок</text>
+  <line x1="550" y1="562" x2="450" y2="562" stroke="#b45309" stroke-width="1.5"/>
+
+  <!-- ============================================================ -->
+  <!-- ВИД ЗВЕРХУ (план)                                            -->
+  <!-- ============================================================ -->
+
+  <text x="850" y="100" class="label" text-anchor="middle" fill="#1e3a8a">ВИД ЗВЕРХУ (план)</text>
+
+  <!-- Матриця (Ø240) -->
+  <circle cx="850" cy="400" r="180" class="matrix"/>
+  <circle cx="850" cy="400" r="180" fill="none" stroke="#475569" stroke-width="2"/>
+
+  <!-- Порожнина (Ø200) -->
+  <circle cx="850" cy="400" r="150" class="matrix-inner"/>
+
+  <!-- Центральний стержень (Ø10 → R=25 для наочності) -->
+  <circle cx="850" cy="400" r="25" class="mandrel"/>
+
+  <!-- 24 стержні пазів (R = 105 мм, через 15°) -->
+  <!-- Розраховано математично: x = 850 + 105·cos(θ), y = 400 + 105·sin(θ) -->
+  <g class="slot-rod">
+    <!-- 0°: -90° -->
+    <circle cx="850.00" cy="295.00" r="6"/>
+    <!-- 1: -75° -->
+    <circle cx="877.18" cy="298.57" r="6"/>
+    <!-- 2: -60° -->
+    <circle cx="902.50" cy="309.07" r="6"/>
+    <!-- 3: -45° -->
+    <circle cx="924.24" cy="325.76" r="6"/>
+    <!-- 4: -30° -->
+    <circle cx="940.93" cy="347.50" r="6"/>
+    <!-- 5: -15° -->
+    <circle cx="951.43" cy="372.82" r="6"/>
+    <!-- 6: 0° -->
+    <circle cx="955.00" cy="400.00" r="6"/>
+    <!-- 7: 15° -->
+    <circle cx="951.43" cy="427.18" r="6"/>
+    <!-- 8: 30° -->
+    <circle cx="940.93" cy="452.50" r="6"/>
+    <!-- 9: 45° -->
+    <circle cx="924.24" cy="474.24" r="6"/>
+    <!-- 10: 60° -->
+    <circle cx="902.50" cy="490.93" r="6"/>
+    <!-- 11: 75° -->
+    <circle cx="877.18" cy="501.43" r="6"/>
+    <!-- 12: 90° -->
+    <circle cx="850.00" cy="505.00" r="6"/>
+    <!-- 13: 105° -->
+    <circle cx="822.82" cy="501.43" r="6"/>
+    <!-- 14: 120° -->
+    <circle cx="797.50" cy="490.93" r="6"/>
+    <!-- 15: 135° -->
+    <circle cx="775.76" cy="474.24" r="6"/>
+    <!-- 16: 150° -->
+    <circle cx="759.07" cy="452.50" r="6"/>
+    <!-- 17: 165° -->
+    <circle cx="748.57" cy="427.18" r="6"/>
+    <!-- 18: 180° -->
+    <circle cx="745.00" cy="400.00" r="6"/>
+    <!-- 19: 195° -->
+    <circle cx="748.57" cy="372.82" r="6"/>
+    <!-- 20: 210° -->
+    <circle cx="759.07" cy="347.50" r="6"/>
+    <!-- 21: 225° -->
+    <circle cx="775.76" cy="325.76" r="6"/>
+    <!-- 22: 240° -->
+    <circle cx="797.50" cy="309.07" r="6"/>
+    <!-- 23: 255° -->
+    <circle cx="822.82" cy="298.57" r="6"/>
+  </g>
+
+  <!-- Розмір діаметра стержня (З Ø) -->
+  <line x1="955" y1="400" x2="985" y2="400" class="dim-line"/>
+  <line x1="955" y1="395" x2="955" y2="405" class="dim-line"/>
+  <line x1="985" y1="395" x2="985" y2="405" class="dim-line"/>
+  <text x="970" y="390" class="dim-text" text-anchor="middle">Ø2.5</text>
+
+  <!-- Підписи -->
+  <text x="850" y="610" class="note" text-anchor="middle">24 стержні пазів · Ø2.5 мм · крок 15° · R = 105 мм</text>
+
+  <!-- ============================================================ -->
+  <!-- ТЕХНІЧНИЙ КОМЕНТАР                                           -->
+  <!-- ============================================================ -->
+
+  <rect x="30" y="650" width="1040" height="270" fill="#f1f5f9" rx="8"/>
+  <text x="550" y="680" class="label" text-anchor="middle" fill="#1e3a8a">ТЕХНІЧНИЙ КОМЕНТАР</text>
+
+  <text x="60" y="710" class="comment">1. Матриця — циліндрична, Ø240 мм, висота 48 мм, матеріал Х12МФ (HRC 58–62).</text>
+  <text x="60" y="735" class="comment">2. Центральний стержень Ø10 мм проходить наскрізь — формує отвір під вал якоря.</text>
+  <text x="60" y="760" class="comment">3. Стержні пазів — 24 шт., Ø2.5 мм, розташовані через 15° на радіусі R = 105 мм.</text>
+  <text x="60" y="785" class="comment">4. Порошок заповнює всю порожнину матриці між стержнями (не «плоский квадрат»).</text>
+  <text x="60" y="810" class="comment">5. Пуансон — Ø40.7 мм, хід 48 мм, тиск пресування 600 МПа, зусилля 707 кН.</text>
+  <text x="60" y="835" class="comment">6. Витягувач — Ø40.7 мм, зусилля витягування ≈ 8 кН.</text>
+  <text x="60" y="860" class="comment">7. У розрізі стержні показані прямокутниками (бокова проекція циліндра), розмір — 2.5 мм (без Ø).</text>
+  <text x="60" y="885" class="comment">8. У плані стержні — круглі, розмір — Ø2.5 мм (зі значком діаметра).</text>
+  <text x="60" y="910" class="comment">9. Допуски: посадка стержнів H7/r6, шорсткість Ra 0.4, биття ≤ 0.02 мм.</text>
+
+</svg>

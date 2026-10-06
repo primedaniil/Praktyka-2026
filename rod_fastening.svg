@@ -1,0 +1,220 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" font-family="Arial, sans-serif">
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font-size: 24px; fill: #1e3a8a; font-weight: bold; text-anchor: middle; }
+      .subtitle { font-size: 14px; fill: #64748b; text-anchor: middle; }
+      
+      /* Матриця */
+      .matrix-top { fill: #cbd5e1; stroke: #475569; stroke-width: 1.5; }
+      .matrix-front { fill: #94a3b8; stroke: #475569; stroke-width: 1.5; }
+      .matrix-side { fill: #64748b; stroke: #475569; stroke-width: 1.5; }
+      .matrix-inner { fill: #fef9c3; stroke: #eab308; stroke-width: 1.5; }
+      
+      /* Стержень паза */
+      .rod-top { fill: #fbbf24; stroke: #b45309; stroke-width: 1.5; }
+      .rod-front { fill: #f59e0b; stroke: #b45309; stroke-width: 1.5; }
+      .rod-side { fill: #d97706; stroke: #b45309; stroke-width: 1.5; }
+      
+      /* Центральний стержень */
+      .mandrel-top { fill: #4ade80; stroke: #166534; stroke-width: 1.5; }
+      .mandrel-front { fill: #16a34a; stroke: #166534; stroke-width: 1.5; }
+      .mandrel-side { fill: #15803d; stroke: #166534; stroke-width: 1.5; }
+      
+      /* Зона запресування */
+      .fit-zone { fill: #dc2626; opacity: 0.3; stroke: #dc2626; stroke-width: 1.5; stroke-dasharray: 4,2; }
+      
+      /* Позначення посадки */
+      .fit-label { font-size: 11px; fill: #dc2626; font-weight: bold; }
+      
+      /* Розміри */
+      .dim-line { stroke: #dc2626; stroke-width: 1.5; fill: none; }
+      .dim-text { font-size: 12px; fill: #dc2626; font-weight: bold; }
+      .dim-bg { fill: #ffffff; opacity: 0.9; }
+      
+      /* Підписи */
+      .label { font-size: 13px; fill: #1e293b; font-weight: bold; }
+      .label-bg { fill: #ffffff; opacity: 0.9; stroke: #cbd5e1; stroke-width: 1; }
+      .note { font-size: 11px; fill: #64748b; font-style: italic; }
+      
+      /* Стрілки */
+      .arrow { stroke: #dc2626; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      
+      /* Заголовки секцій */
+      .section-title { font-size: 15px; fill: #1e3a8a; font-weight: bold; text-anchor: middle; }
+    </style>
+    
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#dc2626"/>
+    </marker>
+    
+    <!-- Паттерн для штриховки -->
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#475569" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  
+  <rect width="1200" height="900" class="bg"/>
+  <text x="600" y="35" class="title">КРІПЛЕННЯ СТЕРЖНІВ У ПРЕС-ФОРМІ</text>
+  <text x="600" y="60" class="subtitle">Схема розрізу · Запресування з натягом · Псевдо-3D</text>
+  
+  <!-- ============================================================ -->
+  <!-- СЕКЦІЯ 1: ЦЕНТРАЛЬНИЙ СТЕРЖЕНЬ (ліва частина)                 -->
+  <!-- ============================================================ -->
+  
+  <text x="300" y="100" class="section-title">1. ЦЕНТРАЛЬНИЙ СТЕРЖЕНЬ</text>
+  
+  <!-- Основа (плита) -->
+  <polygon points="80,650 520,650 560,620 120,620" class="matrix-top"/>
+  <polygon points="80,650 520,650 520,720 80,720" class="matrix-front"/>
+  <polygon points="520,650 560,620 560,690 520,720" class="matrix-side"/>
+  
+  <!-- Отвір в основі -->
+  <polygon points="270,650 330,650 350,635 290,635" fill="#1e293b"/>
+  <polygon points="270,650 330,650 330,680 270,680" fill="#0f172a"/>
+  
+  <!-- Центральний стержень -->
+  <polygon points="280,400 320,400 330,395 290,395" class="mandrel-top"/>
+  <polygon points="280,400 320,400 320,650 280,650" class="mandrel-front"/>
+  <polygon points="320,400 330,395 330,645 320,650" class="mandrel-side"/>
+  
+  <!-- Зона запресування -->
+  <polygon points="275,630 325,630 335,625 285,625" class="fit-zone"/>
+  <polygon points="275,630 325,630 325,660 275,660" class="fit-zone"/>
+  
+  <!-- Позначення посадки -->
+  <rect x="180" y="600" width="120" height="24" class="label-bg" rx="4"/>
+  <text x="240" y="616" class="fit-label" text-anchor="middle">H7/p6</text>
+  
+  <line x1="300" y1="624" x2="300" y2="610" class="arrow"/>
+  
+  <!-- Підпис стержня -->
+  <rect x="350" y="450" width="120" height="24" class="label-bg" rx="4"/>
+  <text x="410" y="466" class="label" text-anchor="middle">Стержень Ø10</text>
+  <line x1="350" y1="462" x2="335" y2="462" stroke="#166534" stroke-width="1.5"/>
+  
+  <!-- Підпис основи -->
+  <rect x="400" y="700" width="100" height="24" class="label-bg" rx="4"/>
+  <text x="450" y="716" class="label" text-anchor="middle">Основа</text>
+  
+  <!-- Розмір стержня -->
+  <line x1="250" y1="400" x2="250" y2="650" class="dim-line"/>
+  <line x1="245" y1="400" x2="255" y2="400" class="dim-line"/>
+  <line x1="245" y1="650" x2="255" y2="650" class="dim-line"/>
+  <rect x="200" y="510" width="50" height="40" class="dim-bg" rx="3"/>
+  <text x="225" y="535" class="dim-text" text-anchor="middle" transform="rotate(90 225 535)">60 мм</text>
+  
+  <!-- Примітка -->
+  <text x="300" y="770" class="note" text-anchor="middle">Матеріал: Х12МФ · HRC 58-62</text>
+  <text x="300" y="790" class="note" text-anchor="middle">Биття: ≤ 0.02 мм</text>
+  
+  <!-- ============================================================ -->
+  <!-- СЕКЦІЯ 2: СТЕРЖНІ ПАЗІВ (права частина)                     -->
+  <!-- ============================================================ -->
+  
+  <text x="900" y="100" class="section-title">2. СТЕРЖНІ ПАЗІВ</text>
+  
+  <!-- Матриця -->
+  <polygon points="700,400 1050,400 1100,370 750,370" class="matrix-top"/>
+  <polygon points="700,400 1050,400 1050,700 700,700" class="matrix-front"/>
+  <polygon points="1050,400 1100,370 1100,670 1050,700" class="matrix-side"/>
+  
+  <!-- Порожнина матриці -->
+  <polygon points="760,420 990,420 1030,400 800,400" class="matrix-inner"/>
+  <polygon points="760,420 990,420 990,680 760,680" class="matrix-inner" opacity="0.5"/>
+  
+  <!-- Стержні пазів (видні в порожнині) -->
+  <g>
+    <!-- Стержень 1 -->
+    <polygon points="800,420 815,420 820,415 805,415" class="rod-top"/>
+    <polygon points="800,420 815,420 815,530 800,530" class="rod-front"/>
+    <polygon points="815,420 820,415 820,525 815,530" class="rod-side"/>
+    
+    <!-- Стержень 2 -->
+    <polygon points="850,420 865,420 870,415 855,415" class="rod-top"/>
+    <polygon points="850,420 865,420 865,530 850,530" class="rod-front"/>
+    <polygon points="865,420 870,415 870,525 865,530" class="rod-side"/>
+    
+    <!-- Стержень 3 -->
+    <polygon points="900,420 915,420 920,415 905,415" class="rod-top"/>
+    <polygon points="900,420 915,420 915,530 900,530" class="rod-front"/>
+    <polygon points="915,420 920,415 920,525 915,530" class="rod-side"/>
+    
+    <!-- Стержень 4 -->
+    <polygon points="950,420 965,420 970,415 955,415" class="rod-top"/>
+    <polygon points="950,420 965,420 965,530 950,530" class="rod-front"/>
+    <polygon points="965,420 970,415 970,525 965,530" class="rod-side"/>
+  </g>
+  
+  <!-- Зона запресування стержнів -->
+  <rect x="795" y="500" width="180" height="40" class="fit-zone" rx="4"/>
+  
+  <!-- Позначення посадки -->
+  <rect x="1010" y="500" width="120" height="24" class="label-bg" rx="4"/>
+  <text x="1070" y="516" class="fit-label" text-anchor="middle">H7/r6</text>
+  <line x1="1010" y1="512" x2="975" y2="512" class="arrow"/>
+  
+  <!-- Підпис стержнів -->
+  <rect x="700" y="330" width="180" height="24" class="label-bg" rx="4"/>
+  <text x="790" y="346" class="label" text-anchor="middle">Стержні пазів Ø2.5</text>
+  <line x1="790" y1="354" x2="840" y2="410" stroke="#b45309" stroke-width="1.5"/>
+  
+  <!-- Підпис матриці -->
+  <rect x="700" y="740" width="120" height="24" class="label-bg" rx="4"/>
+  <text x="760" y="756" class="label" text-anchor="middle">Матриця</text>
+  
+  <!-- Розмір стержня -->
+  <line x1="780" y1="420" x2="780" y2="530" class="dim-line"/>
+  <line x1="775" y1="420" x2="785" y2="420" class="dim-line"/>
+  <line x1="775" y1="530" x2="785" y2="530" class="dim-line"/>
+  <rect x="740" y="460" width="40" height="30" class="dim-bg" rx="3"/>
+  <text x="760" y="480" class="dim-text" text-anchor="middle" transform="rotate(90 760 480)">30 мм</text>
+  
+  <!-- Діаметр стержня -->
+  <line x1="800" y1="390" x2="815" y2="390" class="dim-line"/>
+  <line x1="800" y1="385" x2="800" y2="395" class="dim-line"/>
+  <line x1="815" y1="385" x2="815" y2="395" class="dim-line"/>
+  <rect x="790" y="370" width="40" height="18" class="dim-bg" rx="3"/>
+  <text x="810" y="383" class="dim-text" text-anchor="middle">Ø2.5</text>
+  
+  <!-- Примітка -->
+  <text x="900" y="770" class="note" text-anchor="middle">Матеріал: Х12МФ · HRC 60-64</text>
+  <text x="900" y="790" class="note" text-anchor="middle">Кількість: 24 шт (по числу пазів)</text>
+  
+  <!-- ============================================================ -->
+  <!-- СЕКЦІЯ 3: ЛЕГЕНДА                                            -->
+  <!-- ============================================================ -->
+  
+  <rect x="30" y="120" width="200" height="160" fill="#ffffff" stroke="#cbd5e1" rx="8"/>
+  <text x="130" y="145" class="label" text-anchor="middle" fill="#1e3a8a">Легенда</text>
+  
+  <polygon points="50,165 80,165 90,160 60,160" class="matrix-top"/>
+  <polygon points="50,165 80,165 80,180 50,180" class="matrix-front"/>
+  <polygon points="80,165 90,160 90,175 80,180" class="matrix-side"/>
+  <text x="105" y="178" class="note">Матриця</text>
+  
+  <polygon points="50,200 80,200 90,195 60,195" class="mandrel-top"/>
+  <polygon points="50,200 80,200 80,215 50,215" class="mandrel-front"/>
+  <polygon points="80,200 90,195 90,210 80,215" class="mandrel-side"/>
+  <text x="105" y="213" class="note">Центр. стержень</text>
+  
+  <polygon points="50,235 80,235 90,230 60,230" class="rod-top"/>
+  <polygon points="50,235 80,235 80,250 50,250" class="rod-front"/>
+  <polygon points="80,235 90,230 90,245 80,250" class="rod-side"/>
+  <text x="105" y="248" class="note">Стержень паза</text>
+  
+  <rect x="50" y="260" width="30" height="15" class="fit-zone"/>
+  <text x="105" y="273" class="note">Зона посадки</text>
+  
+  <!-- ============================================================ -->
+  <!-- СЕКЦІЯ 4: ПОРІВНЯННЯ ПОСАДОК                                -->
+  <!-- ============================================================ -->
+  
+  <rect x="30" y="820" width="1140" height="70" fill="#f1f5f9" rx="8"/>
+  <text x="600" y="845" class="section-title" style="font-size: 14px;">ПОРІВНЯННЯ ПОСАДОК</text>
+  
+  <text x="150" y="870" class="note">Центральний стержень: H7/p6 (натяг 0.000–0.024 мм)</text>
+  <text x="550" y="870" class="note">Стержні пазів: H7/r6 (натяг 0.005–0.014 мм)</text>
+  <text x="950" y="870" class="note">Основа: H7/p6 (натяг 0.000–0.024 мм)</text>
+  
+</svg>

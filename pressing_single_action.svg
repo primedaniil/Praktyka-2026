@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 700" font-family="Arial, sans-serif">
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font-size: 20px; fill: #1e3a8a; font-weight: bold; text-anchor: middle; }
+      .matrix { fill: #94a3b8; stroke: #475569; stroke-width: 2; }
+      .matrix-inner { fill: #fef9c3; stroke: #eab308; stroke-width: 1.5; }
+      .punch-top { fill: #dc2626; stroke: #991b1b; stroke-width: 2; }
+      .punch-fixed { fill: #64748b; stroke: #475569; stroke-width: 2; }
+      .mandrel { fill: #16a34a; stroke: #166534; stroke-width: 1.5; }
+      .powder { fill: #f59e0b; opacity: 0.8; stroke: #b45309; stroke-width: 1.5; }
+      .arrow-red { stroke: #dc2626; stroke-width: 4; fill: none; marker-end: url(#arrowR2); }
+      .label { font-size: 13px; fill: #1e293b; font-weight: bold; }
+      .note { font-size: 11px; fill: #64748b; font-style: italic; }
+      .dim-text { font-size: 12px; fill: #dc2626; font-weight: bold; }
+    </style>
+    <marker id="arrowR2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+  
+  <rect width="800" height="700" class="bg"/>
+  <text x="400" y="30" class="title">ОДНОСТОРОННЄ ПРЕСУВАННЯ</text>
+  <text x="400" y="55" class="note" text-anchor="middle">Стиснення тільки зверху, нижній пуансон нерухомий</text>
+  
+  <!-- Основа -->
+  <rect x="200" y="600" width="400" height="40" fill="#64748b" stroke="#475569" stroke-width="2" rx="4"/>
+  
+  <!-- Матриця -->
+  <rect x="200" y="200" width="400" height="400" class="matrix" rx="4"/>
+  <rect x="280" y="220" width="240" height="360" class="matrix-inner"/>
+  
+  <!-- Центральний стержень -->
+  <rect x="380" y="150" width="40" height="500" class="mandrel"/>
+  
+  <!-- Порошок -->
+  <rect x="280" y="350" width="240" height="150" class="powder"/>
+  <text x="400" y="430" class="label" text-anchor="middle" fill="#7c2d12">Ущільнений порошок</text>
+  
+  <!-- Верхній пуансон -->
+  <rect x="280" y="280" width="240" height="70" class="punch-top" rx="4"/>
+  <text x="400" y="320" class="label" text-anchor="middle" fill="#ffffff">ВЕРХНІЙ ПУАНСОН</text>
+  
+  <!-- Нижній пуансон (НЕРУХОМИЙ) -->
+  <rect x="280" y="500" width="240" height="70" class="punch-fixed" rx="4"/>
+  <text x="400" y="540" class="label" text-anchor="middle" fill="#ffffff">НИЖНІЙ ПУАНСОН</text>
+  <text x="400" y="560" class="note" text-anchor="middle" fill="#ffffff">(нерухомий)</text>
+  
+  <!-- Стрілка тиску (тільки зверху) -->
+  <line x1="400" y1="150" x2="400" y2="270" class="arrow-red"/>
+  <text x="450" y="220" class="dim-text">F_заг = F</text>
+  
+  <!-- Розподіл щільності -->
+  <rect x="560" y="280" width="120" height="290" fill="#ffffff" stroke="#cbd5e1" rx="6"/>
+  <text x="620" y="300" class="label" text-anchor="middle" fill="#1e3a8a">Щільність</text>
+  
+  <rect x="575" y="315" width="90" height="40" fill="#dc2626" opacity="0.6"/>
+  <text x="620" y="340" class="note" text-anchor="middle">Висока</text>
+  
+  <rect x="575" y="355" width="90" height="40" fill="#f97316" opacity="0.4"/>
+  <text x="620" y="380" class="note" text-anchor="middle">Середня</text>
+  
+  <rect x="575" y="395" width="90" height="40" fill="#22c55e" opacity="0.3"/>
+  <text x="620" y="420" class="note" text-anchor="middle">Низька</text>
+  
+  <rect x="575" y="435" width="90" height="40" fill="#22c55e" opacity="0.2"/>
+  <text x="620" y="460" class="note" text-anchor="middle">Дуже низька</text>
+  
+  <rect x="575" y="475" width="90" height="40" fill="#22c55e" opacity="0.15"/>
+  <text x="620" y="500" class="note" text-anchor="middle">Мінімальна</text>
+  
+  <text x="620" y="545" class="note" text-anchor="middle">Нерівномірний</text>
+  <text x="620" y="560" class="note" text-anchor="middle">розподіл</text>
+  
+  <!-- Підписи -->
+  <rect x="50" y="300" width="120" height="20" fill="#ffffff" stroke="#cbd5e1" rx="3"/>
+  <text x="110" y="314" class="note" text-anchor="middle">Матриця</text>
+  <line x1="170" y1="310" x2="195" y2="310" stroke="#475569" stroke-width="1"/>
+  
+  <rect x="50" y="420" width="120" height="20" fill="#ffffff" stroke="#cbd5e1" rx="3"/>
+  <text x="110" y="434" class="note" text-anchor="middle">Порошок</text>
+  <line x1="170" y1="430" x2="275" y2="430" stroke="#b45309" stroke-width="1"/>
+  
+  <rect x="50" y="660" width="700" height="30" fill="#fee2e2" rx="6"/>
+  <text x="400" y="680" class="note" text-anchor="middle">Недолік: нерівномірна щільність → нерівномірна усадка при спіканні</text>
+</svg>

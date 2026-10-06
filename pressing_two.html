@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модуль розрахунку пресування сердечника якоря</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            color: #b45309;
+            margin-bottom: 6px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+        }
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: bold;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #b45309;
+            color: #1e293b;
+        }
+        .input-group { margin-bottom: 10px; }
+        label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+            color: #4b5563;
+        }
+        input, select {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: #fafbfc;
+        }
+        input:focus, select:focus {
+            outline: 2px solid #93c5fd;
+            background: #ffffff;
+        }
+        .readonly-input {
+            background: #f3f4f6;
+            cursor: not-allowed;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .btn-calc { background: #b45309; }
+        .btn-calc:hover { background: #92400e; }
+        .btn-back { background: #64748b; }
+        .btn-back:hover { background: #475569; }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            font-size: 0.85rem;
+        }
+        .result-row:last-child { border-bottom: none; }
+        .result-val {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .sub-section {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 2px solid #e5e7eb;
+        }
+        .sub-section h5 {
+            margin: 0 0 8px 0;
+            color: #475569;
+            font-size: 0.9rem;
+        }
+        .success {
+            color: #166534;
+            background: #dcfce7;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            border-left: 3px solid #22c55e;
+        }
+        .warning {
+            color: #b45309;
+            background: #fffbeb;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            border-left: 3px solid #f59e0b;
+        }
+        .danger {
+            color: #991b1b;
+            background: #fee2e2;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            border-left: 3px solid #ef4444;
+        }
+        .info {
+            color: #1e40af;
+            background: #dbeafe;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            border-left: 3px solid #2563eb;
+        }
+        .json-preview {
+            background: #0f172a;
+            color: #22c55e;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            max-height: 200px;
+            overflow: auto;
+            white-space: pre-wrap;
+        }
+        .info-box {
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #475569;
+            margin-top: 10px;
+        }
+        
+        /* Стилі для SVG-схем */
+        .schema-container {
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            padding: 10px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .schema-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+        }
+        .schema-title {
+            font-size: 0.85rem;
+            color: #475569;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .schema-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .schema-tab {
+            padding: 6px 12px;
+            background: #e2e8f0;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #475569;
+            transition: all 0.2s;
+        }
+        .schema-tab:hover {
+            background: #cbd5e1;
+        }
+        .schema-tab.active {
+            background: #b45309;
+            color: white;
+            border-color: #b45309;
+        }
+        .schema-view {
+            display: none;
+        }
+        .schema-view.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🔨 Модуль розрахунку пресування сердечника якоря</h1>
+    <p class="subtitle">Отримує дані з калькулятора електродвигунів · Повний технологічний цикл</p>
+
+    <!-- Статус завантаження даних -->
+    <div class="card" id="statusCard">
+        <div class="card-title">📥 Статус даних</div>
+        <div id="dataStatus" class="info-box">Завантаження...</div>
+    </div>
+
+    <div class="grid">
+        <!-- Вхідні дані з калькулятора -->
+        <div class="card">
+            <div class="card-title">📊 Дані з калькулятора</div>
+
+            <div class="input-group">
+                <label>Тип двигуна</label>
+                <input type="text" id="in_type" class="readonly-input" readonly>
+            </div>
+
+            <div class="input-group">
+                <label>Потужність (P₂), Вт</label>
+                <input type="number" id="in_power" class="readonly-input" readonly>
+            </div>
+
+            <div class="input-group">
+                <label>Частота обертання (n), об/хв</label>
+                <input type="number" id="in_speed" class="readonly-input" readonly>
+            </div>
+
+            <div class="input-group">
+                <label>Діаметр якоря (D_я), мм</label>
+                <input type="number" id="in_D_arm" class="readonly-input" readonly>
+            </div>
+
+            <div class="input-group">
+                <label>Довжина якоря (L_я), мм</label>
+                <input type="number" id="in_L_arm" class="readonly-input" readonly>
+            </div>
+
+            <div class="input-group">
+                <label>Число пазів якоря (Z)</label>
+                <input type="number" id="in_z" class="readonly-input" readonly>
+            </div>
+
+            <div class="input-group">
+                <label>Сумарні втрати (P_сум), Вт</label>
+                <input type="number" id="in_p_loss" class="readonly-input" readonly>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- БЛОК: Дані порошкової технології                             -->
+            <!-- ============================================================ -->
+            <div class="card" style="margin-top:20px;">
+                <div class="card-title">🔬 Дані порошкової технології</div>
+
+                <div class="input-group">
+                    <label>Кінцевий діаметр (D_кінц), мм</label>
+                    <input type="number" id="press_final_diameter" class="readonly-input" readonly>
+                </div>
+
+                <div class="input-group">
+                    <label>Діаметр матриці (D_після_пресування), мм</label>
+                    <input type="number" id="press_matrix_diameter" class="readonly-input" readonly>
+                </div>
+
+                <div class="input-group">
+                    <label>Діаметр порожнини (D_до_спікання), мм</label>
+                    <input type="number" id="press_cavity_diameter" class="readonly-input" readonly>
+                </div>
+
+                <div class="input-group">
+                    <label>Діаметр калібруючого кільця, мм</label>
+                    <input type="number" id="press_ring_diameter" class="readonly-input" readonly>
+                </div>
+
+                <div class="input-group">
+                    <label>Припуск на калібрування, мм/сторону</label>
+                    <input type="number" id="press_allowance" class="readonly-input" readonly>
+                </div>
+
+                <div class="input-group">
+                    <label>Усадка при спіканні, %</label>
+                    <input type="number" id="press_shrink" class="readonly-input" readonly>
+                </div>
+
+                <div class="input-group">
+                    <label>Посадка вала</label>
+                    <input type="text" id="press_fit" class="readonly-input" readonly>
+                </div>
+
+                <div class="input-group">
+                    <label>Натяг (min–max), мм</label>
+                    <input type="text" id="press_nat" class="readonly-input" readonly>
+                </div>
+
+                <div class="input-group">
+                    <label>Точність калібрування, мм</label>
+                    <input type="number" id="press_tolerance" class="readonly-input" readonly>
+                </div>
+
+                <div class="input-group">
+                    <label>Шорсткість після калібрування</label>
+                    <input type="text" id="press_roughness" class="readonly-input" readonly>
+                </div>
+
+                <div class="input-group">
+                    <label>Повітряний зазор, мм</label>
+                    <input type="number" id="press_air_gap" class="readonly-input" readonly>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Налаштування пресування -->
+        <div class="card">
+            <div class="card-title">⚙️ Параметри пресування</div>
+
+            <div class="input-group">
+                <label>Матеріал порошку</label>
+                <select id="press_material" onchange="calculatePressing()">
+                    <option value="PZhV2" data-density="7.2" data-pressure="600" data-temp="1150" data-shrink="1.02">ПЖВ2 (7.2 г/см³, 600 МПа)</option>
+                    <option value="PZhV4" data-density="7.0" data-pressure="650" data-temp="1180" data-shrink="1.025">ПЖВ4 (7.0 г/см³, 650 МПа)</option>
+                    <option value="AVS100" data-density="6.8" data-pressure="700" data-temp="1200" data-shrink="1.03">АВС 100.30 (6.8 г/см³, 700 МПа)</option>
+                    <option value="FeCu" data-density="7.4" data-pressure="550" data-temp="1100" data-shrink="1.018">Залізо-мідь (7.4 г/см³, 550 МПа)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Діаметр вала (d_вала), мм</label>
+                <input type="number" id="press_shaft" value="10" min="5" max="30" oninput="calculatePressing()">
+            </div>
+
+            <div class="input-group">
+                <label>Тип пресування</label>
+                <select id="press_type" onchange="onPressTypeChange()">
+                    <option value="single" selected>Одностороннє</option>
+                    <option value="double">Двостороннє</option>
+                </select>
+            </div>
+
+            <button class="btn-calc" onclick="calculatePressing()">📊 Розрахувати пресування</button>
+            <button class="btn-back" onclick="window.close()">⬅️ Закрити модуль</button>
+
+            <div class="sub-section">
+                <h5>📋 JSON-дані з калькулятора</h5>
+                <div class="json-preview" id="jsonPreview">—</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Результати розрахунку -->
+    <div class="card" style="margin-top:20px;">
+        <div class="card-title">🔨 Результати розрахунку пресування</div>
+        <div id="results"></div>
+    </div>
+
+    <!-- РЕЗУЛЬТАТИ РОЗРАХУНКУ ПРЕС-ФОРМИ -->
+    <div class="card" style="margin-top:20px;">
+        <div class="card-title">🔧 Розрахунок прес-форми</div>
+        <div id="dieSetResults"></div>
+    </div>
+
+    <!-- SVG-СХЕМИ -->
+    <div class="card" style="margin-top:20px;">
+        <div class="card-title">📐 Візуалізація технологічного процесу</div>
+
+        <div class="schema-tabs">
+            <button class="schema-tab active" onclick="showSchema('matrix')">1. Матриця</button>
+            <button class="schema-tab" onclick="showSchema('die')">2. Прес-форма</button>
+            <button class="schema-tab" onclick="showSchema('core')">3. Готовий виріб</button>
+            <button class="schema-tab" onclick="showSchema('thermal')">4. Температурне поле</button>
+            <button class="schema-tab" onclick="showSchema('pressing')">5. Тип пресування</button>
+        </div>
+
+        <div class="schema-container">
+            <div id="schema-matrix" class="schema-view active">
+                <div class="schema-title">Схема матриці для пресування</div>
+                <img src="pressing_matrix.svg" alt="Схема матриці">
+            </div>
+
+            <div id="schema-die" class="schema-view">
+                <div class="schema-title">Прес-форма в зборі</div>
+                <img src="pressing_die_final.svg" alt="Прес-форма">
+                <img src="rod_fastening.svg" alt="Кріплення стержнів">
+            </div>
+
+            <div id="schema-core" class="schema-view">
+                <div class="schema-title">Готовий сердечник якоря</div>
+                <img src="core_static_correct.svg" alt="Готовий сердечник">
+                <img src="ancher.png" alt="Готовий сердечник">
+            </div>
+
+            <div id="schema-thermal" class="schema-view">
+                <div class="schema-title">Температурне поле після розмикання форми</div>
+                <img src="pressing_thermal.svg" alt="Температурне поле">
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- НОВИЙ БЛОК: Тип пресування                                  -->
+            <!-- ============================================================ -->
+            <div id="schema-pressing" class="schema-view">
+                <div class="schema-title">Тип пресування</div>
+
+                <!-- Одностороннє -->
+                <div id="schema-single-view">
+                    <div style="font-size:0.9rem; color:#475569; font-weight:bold; margin:8px 0;">
+                        Одностороннє пресування
+                    </div>
+                    <img src="pressing_single_action.svg" alt="Одностороннє пресування">
+                </div>
+
+                <!-- Двостороннє -->
+                <div id="schema-double-view" style="display:none;">
+                    <div style="font-size:0.9rem; color:#475569; font-weight:bold; margin:8px 0;">
+                        Двостороннє пресування
+                    </div>
+                    <img src="pressing_double_action.svg" alt="Двостороннє пресування">
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// 1. ПЕРЕМИКАННЯ SVG-СХЕМ
+// ============================================================
+function showSchema(schemaName) {
+    // Приховуємо всі схеми
+    document.querySelectorAll('.schema-view').forEach(el => {
+        el.classList.remove('active');
+    });
+
+    // Показуємо обрану
+    document.getElementById('schema-' + schemaName).classList.add('active');
+
+    // Оновлюємо активну вкладку
+    document.querySelectorAll('.schema-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    event.target.classList.add('active');
+
+    // Якщо відкрили вкладку "Тип пресування" — оновлюємо її вміст
+    if (schemaName === 'pressing') {
+        updatePressingSchemaView();
+    }
+}
+
+// ============================================================
+// 2. ОНОВЛЕННЯ ВІДОБРАЖЕННЯ ТИПУ ПРЕСУВАННЯ
+// ============================================================
+function updatePressingSchemaView() {
+    const pressType = document.getElementById('press_type').value;
+    const isDouble = pressType === 'double';
+
+    const singleView = document.getElementById('schema-single-view');
+    const doubleView = document.getElementById('schema-double-view');
+
+    if (singleView && doubleView) {
+        singleView.style.display = isDouble ? 'none' : 'block';
+        doubleView.style.display = isDouble ? 'block' : 'none';
+    }
+}
+
+// ============================================================
+// 3. ОБРОБНИК ЗМІНИ ТИПУ ПРЕСУВАННЯ
+// ============================================================
+function onPressTypeChange() {
+    // Оновлюємо SVG-відображення
+    updatePressingSchemaView();
+
+    // Перераховуємо результати
+    calculatePressing();
+}
+
+// ============================================================
+// 4. ЗАВАНТАЖЕННЯ ДАНИХ З КАЛЬКУЛЯТОРА
+// ============================================================
+window.onload = function() {
+    const jsonData = localStorage.getItem('pressing_data');
+    const statusEl = document.getElementById('dataStatus');
+
+    if (!jsonData) {
+        statusEl.innerHTML = '❌ Дані не знайдено. Будь ласка, поверніться до калькулятора та натисніть «Перейти до модуля пресування».';
+        statusEl.className = 'danger';
+        return;
+    }
+
+    try {
+        const data = JSON.parse(jsonData);
+        statusEl.innerHTML = `✅ Дані успішно завантажено (${new Date(data.timestamp).toLocaleString('uk-UA')})`;
+        statusEl.className = 'success';
+
+        // Показуємо JSON
+        document.getElementById('jsonPreview').textContent = JSON.stringify(data, null, 2);
+
+        // Заповнюємо поля
+        document.getElementById('in_type').value = data.type === 'dc' ? 'ДПТ' : 'АД';
+        document.getElementById('in_power').value = data.power;
+        document.getElementById('in_speed').value = data.speed || '—';
+        document.getElementById('in_D_arm').value = data.calculated.D_arm || data.calculated.D1;
+        document.getElementById('in_L_arm').value = data.calculated.L_arm || data.calculated.L1;
+        document.getElementById('in_z').value = data.z || data.z1;
+        document.getElementById('in_p_loss').value = data.calculated.P_loss;
+
+        // ============================================================
+        // ВИКОРИСТОВУЄМО ДАНІ ПОРОШКОВОЇ ТЕХНОЛОГІЇ
+        // ============================================================
+        if (data.powder) {
+            displayPowderData(data.powder);
+        } else {
+            console.warn('⚠️ Дані порошкової технології відсутні в JSON');
+        }
+
+        // Автоматичний розрахунок
+        calculatePressing();
+
+        // Оновлюємо схему типу пресування
+        updatePressingSchemaView();
+
+    } catch (e) {
+        statusEl.innerHTML = '❌ Помилка парсингу JSON: ' + e.message;
+        statusEl.className = 'danger';
+        console.error('❌', e);
+    }
+};
+
+// ============================================================
+// 5. ВІДОБРАЖЕННЯ ДАНИХ ПОРОШКОВОЇ ТЕХНОЛОГІЇ
+// ============================================================
+function displayPowderData(p) {
+    function setValue(id, value) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.value = value;
+            console.log('✅', id, '=', value);
+        } else {
+            console.warn('⚠️ Елемент не знайдено:', id);
+        }
+    }
+
+    setValue('press_final_diameter', p.D_final);
+    setValue('press_matrix_diameter', p.D_after_pressing);
+    setValue('press_cavity_diameter', p.D_before_sintering);
+    setValue('press_ring_diameter', p.D_calibration_ring);
+    setValue('press_allowance', p.allowance_calibration);
+    setValue('press_shrink', ((p.shrink_factor - 1) * 100).toFixed(1));
+    setValue('press_fit', p.fit_shaft);
+    setValue('press_nat', p.N_min.toFixed(3) + '…' + p.N_max.toFixed(3));
+    setValue('press_tolerance', p.tolerance_calibration);
+    setValue('press_roughness', p.roughness);
+    setValue('press_air_gap', p.air_gap);
+
+    console.log('✅ Дані порошкової технології відображено');
+}
+
+// ============================================================
+// 6. РОЗРАХУНОК ПРЕС-ФОРМИ
+// ============================================================
+function calculateDieSet(D_arm, L_arm, d_shaft, F_press, m_powder, T_sinter, isDouble) {
+
+    // 1. МАТРИЦЯ
+    const D_matrix_inner = D_arm * 1.02;
+    const sigma_allow = 1200;
+    const p_inner = 600;
+    const r_inner = D_matrix_inner / 2;
+    const t_wall = r_inner * (Math.sqrt((sigma_allow + p_inner) / (sigma_allow - p_inner)) - 1);
+    const D_matrix_outer = D_matrix_inner + 2 * t_wall;
+    const H_matrix = L_arm * 1.5 + 20;
+    const V_matrix = Math.PI / 4 * (Math.pow(D_matrix_outer/1000, 2) - Math.pow(D_matrix_inner/1000, 2)) * (H_matrix/1000);
+    const m_matrix = V_matrix * 7850;
+
+    // 2. ПУАНСОН
+    const clearance = 0.05;
+    const D_punch = D_matrix_inner - clearance;
+    const stroke = L_arm * 1.5;
+    const L_punch = 2.5 * D_punch;
+    const E_steel = 210000;
+    const I_punch = Math.PI * Math.pow(D_punch/2000, 4) / 64;
+    const F_critical = Math.PI * Math.PI * E_steel * 1e6 * I_punch / Math.pow(L_punch/1000, 2);
+    const S_punch = Math.PI / 4 * Math.pow(D_punch/1000, 2);
+    const sigma_punch = F_press * 1000 / (S_punch * 1e6);
+
+    // 3. ЦЕНТРАЛЬНИЙ СТЕРЖЕНЬ
+    const d_mandrel = d_shaft + 0.1;
+    const L_mandrel = H_matrix + 20;
+    const S_mandrel = Math.PI / 4 * Math.pow(d_mandrel/1000, 2);
+    const sigma_mandrel = F_press * 1000 / (S_mandrel * 1e6);
+
+    // 4. ВИТЯГУВАННЯ
+    const mu = 0.15;
+    const S_contact = Math.PI * D_arm * L_arm / 1e6;
+    const F_friction = mu * p_inner * 1e6 * S_contact;
+    const F_eject = F_friction * 1.5 / 1000;
+
+    // 5. ЗАЗОРИ
+    const clearance_punch = 0.05;
+    const clearance_mandrel = 0.05;
+    const alpha_steel = 12e-6;
+    const dT = T_sinter - 20;
+    const thermal_expansion = alpha_steel * D_matrix_inner * dT;
+    const thermal_clearance = thermal_expansion - clearance_punch;
+
+    // 6. ТЕПЛОВИЙ РОЗРАХУНОК
+    const Q_heat = F_press * 1000 * 0.1;
+    const m_matrix_kg = m_matrix;
+    const c_steel = 500;
+    const dT_matrix = Q_heat / (m_matrix_kg * c_steel);
+    const alpha_conv = 15;
+    const S_matrix = Math.PI * D_matrix_outer / 1000 * H_matrix / 1000 + 2 * Math.PI / 4 * Math.pow(D_matrix_outer/1000, 2);
+    const tau_cool = m_matrix_kg * c_steel / (alpha_conv * S_matrix) * Math.log((T_sinter - 20) / (50 - 20));
+
+    // 7. ПРОДУКТИВНІСТЬ (коригування для двостороннього)
+    const t_cycle = isDouble ? 28 : 30;
+    const productivity = 3600 / t_cycle;
+    const annual = productivity * 8 * 250;
+
+    return {
+        D_matrix_inner, D_matrix_outer, t_wall, H_matrix, m_matrix,
+        material: 'Х12МФ', hardness: 'HRC 58-62',
+        D_punch, L_punch, stroke, sigma_punch, F_critical: F_critical / 1000,
+        d_mandrel, L_mandrel, sigma_mandrel,
+        F_eject, mu,
+        clearance_punch, clearance_mandrel, thermal_expansion, thermal_clearance,
+        Q_heat, dT_matrix, tau_cool,
+        t_cycle, productivity, annual
+    };
+}
+
+// ============================================================
+// 7. ВІДОБРАЖЕННЯ РЕЗУЛЬТАТІВ ПРЕС-ФОРМИ
+// ============================================================
+function displayDieSetResults(d) {
+    const html = `
+        <div class="sub-section">
+            <h5>📦 1. Матриця</h5>
+            <div class="result-row"><span>Внутрішній діаметр (D_вн):</span><span class="result-val">${d.D_matrix_inner.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Зовнішній діаметр (D_зовн):</span><span class="result-val">${d.D_matrix_outer.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Товщина стінки (t_ст):</span><span class="result-val">${d.t_wall.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Висота (H):</span><span class="result-val">${d.H_matrix.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Маса матриці:</span><span class="result-val">${d.m_matrix.toFixed(2)} кг</span></div>
+            <div class="result-row"><span>Матеріал:</span><span class="result-val">${d.material}</span></div>
+            <div class="result-row"><span>Твердість:</span><span class="result-val">${d.hardness}</span></div>
+        </div>
+
+        <div class="sub-section">
+            <h5>🔨 2. Пуансон</h5>
+            <div class="result-row"><span>Діаметр (d):</span><span class="result-val">${d.D_punch.toFixed(2)} мм</span></div>
+            <div class="result-row"><span>Довжина (L):</span><span class="result-val">${d.L_punch.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Хід (S):</span><span class="result-val">${d.stroke.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Напруга стиснення:</span><span class="result-val">${d.sigma_punch.toFixed(1)} МПа</span></div>
+            <div class="result-row"><span>Критична сила:</span><span class="result-val">${d.F_critical.toFixed(1)} кН</span></div>
+        </div>
+
+        <div class="sub-section">
+            <h5>⚙️ 3. Центральний стержень</h5>
+            <div class="result-row"><span>Діаметр (d):</span><span class="result-val">${d.d_mandrel.toFixed(2)} мм</span></div>
+            <div class="result-row"><span>Довжина (L):</span><span class="result-val">${d.L_mandrel.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Напруга стиснення:</span><span class="result-val">${d.sigma_mandrel.toFixed(1)} МПа</span></div>
+        </div>
+
+        <div class="sub-section">
+            <h5>⬆️ 4. Витягування</h5>
+            <div class="result-row"><span>Коефіцієнт тертя (μ):</span><span class="result-val">${d.mu}</span></div>
+            <div class="result-row"><span>Зусилля витягування (F):</span><span class="result-val">${d.F_eject.toFixed(1)} кН</span></div>
+        </div>
+
+        <div class="sub-section">
+            <h5>📏 5. Зазори</h5>
+            <div class="result-row"><span>Пуансон-матриця:</span><span class="result-val">${d.clearance_punch} мм</span></div>
+            <div class="result-row"><span>Стержень-сердечник:</span><span class="result-val">${d.clearance_mandrel} мм</span></div>
+            <div class="result-row"><span>Теплове розширення:</span><span class="result-val">${d.thermal_expansion.toFixed(3)} мм</span></div>
+            <div class="result-row"><span>Тепловий зазор:</span><span class="result-val">${d.thermal_clearance.toFixed(3)} мм</span></div>
+        </div>
+
+        <div class="sub-section">
+            <h5>🌡️ 6. Тепловий розрахунок прес-форми</h5>
+            <div class="result-row"><span>Тепло при пресуванні (Q):</span><span class="result-val">${(d.Q_heat/1000).toFixed(1)} кДж</span></div>
+            <div class="result-row"><span>Нагрів матриці (ΔT):</span><span class="result-val">${d.dT_matrix.toFixed(1)} °C</span></div>
+            <div class="result-row"><span>Час охолодження (τ):</span><span class="result-val">${d.tau_cool.toFixed(0)} с</span></div>
+        </div>
+
+        <div class="sub-section">
+            <h5>📊 7. Продуктивність</h5>
+            <div class="result-row"><span>Час циклу:</span><span class="result-val">${d.t_cycle} с</span></div>
+            <div class="result-row"><span>Продуктивність:</span><span class="result-val">${d.productivity.toFixed(0)} шт/год</span></div>
+            <div class="result-row"><span>Річна (1 зміна):</span><span class="result-val">${d.annual.toLocaleString('uk-UA')} шт/рік</span></div>
+        </div>
+    `;
+
+    document.getElementById('dieSetResults').innerHTML = html;
+}
+
+// ============================================================
+// 8. РОЗРАХУНОК ПРЕСУВАННЯ
+// ============================================================
+function calculatePressing() {
+    const jsonData = localStorage.getItem('pressing_data');
+    if (!jsonData) return;
+
+    const data = JSON.parse(jsonData);
+
+    // Отримання даних матеріалу
+    const matSel = document.getElementById('press_material');
+    const matData = matSel.options[matSel.selectedIndex].dataset;
+    const density = parseFloat(matData.density);
+    const pressure = parseFloat(matData.pressure);
+    const T_sinter = parseFloat(matData.temp);
+    const shrink = parseFloat(matData.shrink);
+
+    // Геометрія
+    const D_arm = data.calculated.D_arm || data.calculated.D1;
+    const L_arm = data.calculated.L_arm || data.calculated.L1;
+    const d_shaft = parseFloat(document.getElementById('press_shaft').value);
+
+    // Тип пресування
+    const pressType = document.getElementById('press_type').value;
+    const isDouble = pressType === 'double';
+    const k_press = isDouble ? 0.85 : 1.0;
+
+    // --- Розрахунки ---
+    const V_core = Math.PI / 4 * (Math.pow(D_arm/10, 2) - Math.pow(d_shaft/10, 2)) * (L_arm/10);
+    const m_powder = V_core * density;
+    const S_press = Math.PI / 4 * (Math.pow(D_arm/10, 2) - Math.pow(d_shaft/10, 2));
+
+    // Загальне зусилля
+    const F_press_total = pressure * S_press * 0.1 * k_press;
+
+    // 🔽 РОЗПОДІЛ ЗУСИЛЛЯ
+    let F_press_top, F_press_bottom, stroke_top, stroke_bottom;
+    if (isDouble) {
+        F_press_top = F_press_total / 2;
+        F_press_bottom = F_press_total / 2;
+        stroke_top = (L_arm * 1.5) / 2;
+        stroke_bottom = (L_arm * 1.5) / 2;
+    } else {
+        F_press_top = F_press_total;
+        F_press_bottom = 0;
+        stroke_top = L_arm * 1.5;
+        stroke_bottom = 0;
+    }
+
+    // Діаметр матриці (мм)
+    const D_matrix = D_arm * shrink;
+    const H_matrix = L_arm * 1.5;
+    const density_final = density / shrink;
+
+    // Температура спікання (°C)
+    const P_loss = data.calculated.P_loss;
+    const T_final = T_sinter + (P_loss / 100) * 5;
+
+    // --- Вивід ---
+    let results = `
+        <div class="sub-section">
+            <h5>🔧 Етап 1: Підготовка порошку</h5>
+            <div class="result-row"><span>Матеріал:</span><span class="result-val">${matSel.options[matSel.selectedIndex].text.split(' (')[0]}</span></div>
+            <div class="result-row"><span>Щільність порошку:</span><span class="result-val">${density.toFixed(2)} г/см³</span></div>
+            <div class="result-row"><span>Тиск пресування:</span><span class="result-val">${pressure} МПа</span></div>
+            <div class="result-row"><span>Об'єм сердечника (V):</span><span class="result-val">${V_core.toFixed(2)} см³</span></div>
+            <div class="result-row"><span>Маса порошку (m):</span><span class="result-val">${m_powder.toFixed(1)} г</span></div>
+        </div>
+
+        <div class="sub-section">
+            <h5>🔨 Етап 2: Пресування (${isDouble ? 'двостороннє' : 'одностороннє'})</h5>
+            <div class="result-row"><span>Тип пресування:</span><span class="result-val">${isDouble ? 'Двостороннє' : 'Одностороннє'}</span></div>
+            <div class="result-row"><span>Площа пресування (S_прес):</span><span class="result-val">${S_press.toFixed(2)} см²</span></div>
+            <div class="result-row"><span>Загальне зусилля (F_заг):</span><span class="result-val">${F_press_total.toFixed(1)} кН</span></div>
+            <div class="result-row"><span>Зусилля верхнє (F_верх):</span><span class="result-val">${F_press_top.toFixed(1)} кН</span></div>
+            <div class="result-row"><span>Зусилля нижнє (F_низ):</span><span class="result-val">${F_press_bottom.toFixed(1)} кН</span></div>
+            <div class="result-row"><span>Хід верхнього пуансона:</span><span class="result-val">${stroke_top.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Хід нижнього пуансона:</span><span class="result-val">${stroke_bottom.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Розподіл щільності:</span><span class="result-val">${isDouble ? 'Симетричний' : 'Нерівномірний'}</span></div>
+            <div class="result-row"><span>Нейтральна лінія:</span><span class="result-val">${isDouble ? 'У центрі' : 'Біля нижнього пуансона'}</span></div>
+            <div class="result-row"><span>Діаметр матриці (D_матриці):</span><span class="result-val">${D_matrix.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Висота матриці (H_матриці):</span><span class="result-val">${H_matrix.toFixed(1)} мм</span></div>
+        </div>
+
+        <div class="sub-section">
+            <h5>🔥 Етап 3: Спікання</h5>
+            <div class="result-row"><span>Температура спікання (T_спік):</span><span class="result-val">${T_final.toFixed(0)} °C</span></div>
+            <div class="result-row"><span>Час спікання:</span><span class="result-val">${(30 + m_powder/10).toFixed(0)} хв</span></div>
+            <div class="result-row"><span>Атмосфера:</span><span class="result-val">Водень / вакуум</span></div>
+        </div>
+
+        <div class="sub-section">
+            <h5>✅ Етап 4: Готовий виріб</h5>
+            <div class="result-row"><span>Коефіцієнт усадки:</span><span class="result-val">${shrink.toFixed(3)}</span></div>
+            <div class="result-row"><span>Кінцева щільність:</span><span class="result-val">${density_final.toFixed(2)} г/см³</span></div>
+            <div class="result-row"><span>Кінцевий діаметр:</span><span class="result-val">${D_arm.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Кінцева довжина:</span><span class="result-val">${L_arm.toFixed(1)} мм</span></div>
+            <div class="result-row"><span>Маса виробу:</span><span class="result-val">${m_powder.toFixed(1)} г</span></div>
+        </div>
+    `;
+
+    // Статус
+    const statusEl = document.getElementById('results');
+    let statusClass, statusText;
+    if (F_press_total < 100) {
+        statusClass = 'success';
+        statusText = `✅ Пресування можливе (F = ${F_press_total.toFixed(0)} кН)`;
+    } else if (F_press_total < 500) {
+        statusClass = 'warning';
+        statusText = `⚠️ Потрібен потужний прес (F = ${F_press_total.toFixed(0)} кН)`;
+    } else {
+        statusClass = 'danger';
+        statusText = `🔴 Критично! Потрібен гідравлічний прес (F = ${F_press_total.toFixed(0)} кН)`;
+    }
+
+    // Додаткова інформація про тип пресування
+    let infoText = '';
+    if (isDouble) {
+        infoText = `<div class="info">ℹ️ Двостороннє пресування: зусилля розподілено навпіл, щільність симетрична, усадка рівномірна</div>`;
+    } else {
+        infoText = `<div class="warning">⚠️ Одностороннє пресування: нерівномірна щільність, можлива нерівномірна усадка</div>`;
+    }
+
+    statusEl.innerHTML = results + infoText + `<div class="${statusClass}">${statusText}</div>`;
+
+    // --- Розрахунок прес-форми ---
+    const dieSet = calculateDieSet(D_arm, L_arm, d_shaft, F_press_total, m_powder, T_final, isDouble);
+    displayDieSetResults(dieSet);
+
+    // Оновлення SVG
+    updateSVGSchemas(D_arm, L_arm, D_matrix, H_matrix, d_shaft);
+}
+
+// ============================================================
+// 9. ОНОВЛЕННЯ SVG-СХЕМ
+// ============================================================
+function updateSVGSchemas(D_arm, L_arm, D_matrix, H_matrix, d_shaft) {
+    console.log('SVG оновлено:', { D_arm, L_arm, D_matrix, H_matrix, d_shaft });
+}
+</script>
+
+</body>
+</html>
