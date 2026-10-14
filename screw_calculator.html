@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Розрахунок продуктивності шнека</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f7f6; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #1e3a8a; text-align: center; }
+        .input-group { margin-bottom: 12px; }
+        label { display: block; font-size: 0.85rem; color: #475569; margin-bottom: 4px; }
+        input { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; }
+        .result { background: #f1f5f9; padding: 15px; border-radius: 8px; margin-top: 15px; }
+        .result-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #cbd5e1; }
+        .result-val { font-weight: bold; color: #0f172a; }
+        button { width: 100%; padding: 12px; background: #1e40af; color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🔩 Розрахунок продуктивності шнека</h1>
+    
+    <div class="input-group">
+        <label>Зовнішній діаметр шнека (D), м</label>
+        <input type="number" id="D" value="0.05" step="0.001">
+    </div>
+    <div class="input-group">
+        <label>Діаметр вала шнека (d), м</label>
+        <input type="number" id="d" value="0.02" step="0.001">
+    </div>
+    <div class="input-group">
+        <label>Крок шнека (S), м</label>
+        <input type="number" id="S" value="0.04" step="0.001">
+    </div>
+    <div class="input-group">
+        <label>Частота обертання (n), об/хв</label>
+        <input type="number" id="n" value="60">
+    </div>
+    <div class="input-group">
+        <label>Коефіцієнт заповнення (ψ)</label>
+        <input type="number" id="psi" value="0.4" step="0.05" min="0.1" max="1">
+    </div>
+    <div class="input-group">
+        <label>Насипна щільність порошку (ρ), кг/м³</label>
+        <input type="number" id="rho" value="2800">
+    </div>
+    <div class="input-group">
+        <label>Довжина шнека (L), м</label>
+        <input type="number" id="L" value="0.6" step="0.1">
+    </div>
+    
+    <button onclick="calculate()">📊 Розрахувати</button>
+    
+    <div class="result" id="results"></div>
+</div>
+
+<script>
+function calculate() {
+    const D = parseFloat(document.getElementById('D').value);
+    const d = parseFloat(document.getElementById('d').value);
+    const S = parseFloat(document.getElementById('S').value);
+    const n = parseFloat(document.getElementById('n').value);
+    const psi = parseFloat(document.getElementById('psi').value);
+    const rho = parseFloat(document.getElementById('rho').value);
+    const L = parseFloat(document.getElementById('L').value);
+    
+    // 1. Геометрична продуктивність (м³/год)
+    const Q_geom_m3 = 47 * (D*D - d*d) * S * n * psi;
+    
+    // 2. Фактична продуктивність (кг/год)
+    const Q_fact_kg = Q_geom_m3 * rho;
+    
+    // 3. Об'ємна продуктивність (м³/с)
+    const Q_m3s = Q_geom_m3 / 3600;
+    
+    // 4. Швидкість потоку (м/с)
+    const A = Math.PI / 4 * (D*D - d*d);
+    const v = Q_m3s / A;
+    
+    // 5. Потужність приводу (кВт)
+    const w = 3;
+    const k = 1.3;
+    const eta = 0.85;
+    const P = (Q_fact_kg * L * w * k) / (367 * eta);
+    
+    // 6. Крутний момент (Н·м)
+    const omega = 2 * Math.PI * n / 60;
+    const M = P * 1000 / omega;
+    
+    const html = `
+        <h3>Результати розрахунку:</h3>
+        <div class="result-row"><span>Геометрична продуктивність:</span><span class="result-val">${Q_geom_m3.toFixed(3)} м³/год</span></div>
+        <div class="result-row"><span>Фактична продуктивність:</span><span class="result-val">${Q_fact_kg.toFixed(1)} кг/год</span></div>
+        <div class="result-row"><span>Об'ємна продуктивність:</span><span class="result-val">${(Q_m3s * 1000).toFixed(3)} л/с</span></div>
+        <div class="result-row"><span>Швидкість потоку:</span><span class="result-val">${v.toFixed(3)} м/с</span></div>
+        <div class="result-row"><span>Потужність приводу:</span><span class="result-val">${P.toFixed(2)} кВт</span></div>
+        <div class="result-row"><span>Крутний момент:</span><span class="result-val">${M.toFixed(2)} Н·м</span></div>
+    `;
+    
+    document.getElementById('results').innerHTML = html;
+}
+
+window.onload = calculate;
+</script>
+</body>
+</html>

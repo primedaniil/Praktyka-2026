@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Розрахунок індуктора</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f7f6; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #1e3a8a; text-align: center; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .input-group { margin-bottom: 12px; }
+        label { display: block; font-size: 0.85rem; color: #475569; margin-bottom: 4px; }
+        input { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; }
+        .result { background: #f1f5f9; padding: 15px; border-radius: 8px; margin-top: 15px; }
+        .result-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #cbd5e1; }
+        .result-val { font-weight: bold; color: #0f172a; }
+        button { width: 100%; padding: 12px; background: #7c3aed; color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>⚡ Розрахунок індуктора</h1>
+    
+    <div class="grid">
+        <div class="input-group">
+            <label>Маса порошку (m), кг</label>
+            <input type="number" id="m" value="0.2167" step="0.01">
+        </div>
+        <div class="input-group">
+            <label>Питома теплоємність (c), Дж/(кг·°C)</label>
+            <input type="number" id="c" value="460">
+        </div>
+        <div class="input-group">
+            <label>Початкова температура (T₁), °C</label>
+            <input type="number" id="T1" value="20">
+        </div>
+        <div class="input-group">
+            <label>Кінцева температура (T₂), °C</label>
+            <input type="number" id="T2" value="570">
+        </div>
+        <div class="input-group">
+            <label>Час нагріву (t), с</label>
+            <input type="number" id="t" value="60">
+        </div>
+        <div class="input-group">
+            <label>ККД індуктора (η)</label>
+            <input type="number" id="eta" value="0.7" step="0.05">
+        </div>
+        <div class="input-group">
+            <label>Число витків (N)</label>
+            <input type="number" id="N" value="20">
+        </div>
+        <div class="input-group">
+            <label>Діаметр котушки (D), м</label>
+            <input type="number" id="D" value="0.08" step="0.01">
+        </div>
+        <div class="input-group">
+            <label>Довжина котушки (l), м</label>
+            <input type="number" id="l" value="0.15" step="0.01">
+        </div>
+        <div class="input-group">
+            <label>Ємність конденсатора (C), мкФ</label>
+            <input type="number" id="C" value="10" step="0.1">
+        </div>
+    </div>
+    
+    <button onclick="calculate()">📊 Розрахувати</button>
+    
+    <div class="result" id="results"></div>
+</div>
+
+<script>
+function calculate() {
+    const m = parseFloat(document.getElementById('m').value);
+    const c = parseFloat(document.getElementById('c').value);
+    const T1 = parseFloat(document.getElementById('T1').value);
+    const T2 = parseFloat(document.getElementById('T2').value);
+    const t = parseFloat(document.getElementById('t').value);
+    const eta = parseFloat(document.getElementById('eta').value);
+    const N = parseFloat(document.getElementById('N').value);
+    const D = parseFloat(document.getElementById('D').value);
+    const l = parseFloat(document.getElementById('l').value);
+    const C_uF = parseFloat(document.getElementById('C').value);
+    
+    // 1. Потужність індуктора (Вт)
+    const dT = T2 - T1;
+    const Q = m * c * dT;  // Дж
+    const P = Q / (t * eta);  // Вт
+    
+    // 2. Площа перерізу котушки (м²)
+    const A = Math.PI * Math.pow(D/2, 2);
+    
+    // 3. Індуктивність котушки (Гн)
+    const mu0 = 4 * Math.PI * 1e-7;
+    const mu_r = 1;  // для повітря
+    const L = (mu0 * mu_r * N * N * A) / l;
+    
+    // 4. Ємність (Ф)
+    const C = C_uF * 1e-6;
+    
+    // 5. Резонансна частота (Гц)
+    const f = 1 / (2 * Math.PI * Math.sqrt(L * C));
+    
+    // 6. Глибина проникнення (м)
+    const rho = 1.7e-8;  // Ом·м для заліза
+    const delta = Math.sqrt(rho / (Math.PI * f * mu0 * mu_r));
+    
+    // 7. Струм (А)
+    const U = 380;  // В
+    const I = P / U;
+    
+    // 8. Енергія (кДж)
+    const E = Q / 1000;
+    
+    const html = `
+        <h3>Результати розрахунку:</h3>
+        <div class="result-row"><span>Потужність індуктора:</span><span class="result-val">${P.toFixed(0)} Вт (${(P/1000).toFixed(2)} кВт)</span></div>
+        <div class="result-row"><span>Енергія на нагрів:</span><span class="result-val">${E.toFixed(2)} кДж</span></div>
+        <div class="result-row"><span>Кількість теплоти:</span><span class="result-val">${Q.toFixed(0)} Дж</span></div>
+        <div class="result-row"><span>Площа перерізу:</span><span class="result-val">${(A * 1e4).toFixed(2)} см²</span></div>
+        <div class="result-row"><span>Індуктивність котушки:</span><span class="result-val">${(L * 1e6).toFixed(2)} мкГн</span></div>
+        <div class="result-row"><span>Резонансна частота:</span><span class="result-val">${(f/1000).toFixed(1)} кГц</span></div>
+        <div class="result-row"><span>Глибина проникнення:</span><span class="result-val">${(delta * 1e6).toFixed(1)} мкм</span></div>
+        <div class="result-row"><span>Струм індуктора:</span><span class="result-val">${I.toFixed(1)} А</span></div>
+        <div class="result-row"><span>Напруга:</span><span class="result-val">380 В</span></div>
+        <div class="result-row"><span>Час нагріву:</span><span class="result-val">${t} с</span></div>
+    `;
+    
+    document.getElementById('results').innerHTML = html;
+}
+
+window.onload = calculate;
+</script>
+</body>
+</html>

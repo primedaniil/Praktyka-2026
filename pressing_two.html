@@ -83,6 +83,10 @@
         }
         .btn-calc { background: #b45309; }
         .btn-calc:hover { background: #92400e; }
+        .btn-calc-inductor { background: #a45309; }
+        .btn-calc-inductor:hover { background: #82400e; }
+        .btn-calc-screw { background: #945309; }
+        .btn-calc-screw:hover { background: #72400e; }
         .btn-back { background: #64748b; }
         .btn-back:hover { background: #475569; }
         .result-row {
@@ -220,6 +224,7 @@
 <div class="container">
     <h1>🔨 Модуль розрахунку пресування сердечника якоря</h1>
     <p class="subtitle">Отримує дані з калькулятора електродвигунів · Повний технологічний цикл</p>
+
     <!-- Статус завантаження даних -->
     <div class="card" id="statusCard">
         <div class="card-title">📥 Статус даних</div>
@@ -358,6 +363,8 @@
             </div>
 
             <button class="btn-calc" onclick="calculatePressing()">📊 Розрахувати пресування</button>
+			<button class="btn-calc-inductor" onclick="goToCalcInductor()">🔨 Перейти до розрахунку індуктора</button>
+			<button class="btn-calc-screw" onclick="goToCalcScrew()">🔨 Перейти до розрахунку продуктивності шнека</button>
             <button class="btn-back" onclick="window.close()">⬅️ Закрити модуль</button>
 
             <div class="sub-section">
@@ -710,6 +717,16 @@ function displayDieSetResults(d) {
 
     document.getElementById('dieSetResults').innerHTML = html;
 }
+
+
+
+			function goToCalcInductor(){
+			window.open('inductor_calculator.html', '_blank');
+			}
+			function goToCalcScrew(){
+			window.open('screw_calculator.html', '_blank');
+			}
+
 
 // ============================================================
 // 8. РОЗРАХУНОК ПРЕСУВАННЯ
